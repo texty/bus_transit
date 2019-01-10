@@ -1,28 +1,48 @@
 <!DOCTYPE html>
-<html style="height: 100%; margin: 0;">
+<html>
 <head>
-	<title>Leaflet.PixiOverlay basic example</title>
+	<title>Bus Transit</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<link rel="stylesheet" href="css/leaflet.css"/>
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src="example.min.js"></script>
+	<script src="lib/rbush.js"></script>
+	<script src="lib/turf.min.js"></script>
+	<script src="lib/jquery-3.3.1.js"></script>
+	<link rel="stylesheet" href="style.css">
+
 </head>
-<body style="height: 100%; margin: 0;">
-<div id="map" style="height: 100%; width: 100%;"></div>
-<div class="pixi"></div>
-<style>
-	.pixi-popup {padding-bottom: 34px;}
-</style>
+<body>
+<main>
+	<figure>
+		<div id="map"></div>
+	</figure>
+	<div class="table"></div>
+	<div class="pixi"></div>
+</main>
 <script>
 
 	d3.csv('coords.csv')
 				  .then(function(names) {
 				      d3.csv('names_coords.csv')
 				        .then(function(coords) {
-				    		console.log(coords);
-				            console.log(names);
 
+							// created geojson out of basic data
+							var geojson = coords.map(function (d) {
+								return {
+									type: "Feature",
+									properties: d,
+									geometry: {
+										type: "Point",
+										coordinates: [+d.Long, +d.Lat]
+									}
+								}
+							});
+
+							var nested_names = d3.nest()
+									.key(function(d) { return d.first.trim(); })
+									.entries(names);
 
 				            var nested_data = d3.nest()
 				                            .key(function(d) {
@@ -31,13 +51,29 @@
 				                            .map(coords);
 
 
+							nested_names.forEach(function(d, i) {
+								d.values.forEach(function (dd,ii) {
+									if (nested_data['$' + dd.first.trim()] != undefined && nested_data['$' + dd.second.trim()] != undefined)
+									{
+										nested_names[i].values[ii].coords = [[+nested_data['$' + dd.first.trim()][0].Lat, +nested_data['$' + dd.first.trim()][0].Long], [+nested_data['$' + dd.second.trim()][0].Lat, +nested_data['$' + dd.second.trim()][0].Long]]
+									}
+									else {
+										nested_names[i].values[ii].coords = 'NO'
+									}
+								})
+							});
+
+							nested_names = d3.nest().key(function(d) {return d.key;}).map(nested_names);
+
 
 				            
 				            var result = names.map(function(name) {
 				                if (nested_data['$' + name.first.trim()] != undefined && nested_data['$' + name.second.trim()] != undefined)
 				                {
 				                    return {
-				                        'name':name.first + ' | ' + name.second,
+				                        'departure':name.first,
+										'arrival': name.second,
+										'route_operator': name.route_operator,
 				                        'coords': [[+nested_data['$' + name.first.trim()][0].Lat, +nested_data['$' + name.first.trim()][0].Long], [+nested_data['$' + name.second.trim()][0].Lat, +nested_data['$' + name.second.trim()][0].Long]]
 				                    }
 				                }
@@ -49,43 +85,91 @@
 
 				            var lineCoord = result.filter(function(d) {
 				            	return d != 'no'
-				            })
-				            // .filter(function(d) {
-				            // 	if (d.name.split(' | ')[0] == 'Львів' || d.name.split(' | ')[1] == 'Львів')
-				            // 	return d
-				            // })
+				            });
+							
+							var nested_cities = d3.nest().key(function(d) {return d.departure;}).map(result);
+							var nested_operators = d3.nest().key(function(d) {return d.route_operator;}).map(result);
+
+							var operator_names = d3.map(function(d) {return d.route_operator;}).entries(result);
+							var city_names = d3.nest().key(function(d) {return d.departure;}).entries(result)
+									.filter(d => d.key != 'undefined');
 
 
+							var cities = d3.select('div.table').selectAll('div')
+									.data(city_names)
+									.enter()
+									.append("div")
+									.attr('class', 'city');
+
+							var cityNames = cities.append('div')
+									.text(d => d.key)
+									.attr('class', 'cityTitle');
+
+							//.append('div').attr('class', 'routesList')
+							var routes =  cities.selectAll('div')
+									.data(d => d.values)
+									.enter()
+									.append('div')
+									.attr('class', 'route')
+									.style('display', 'none');
+
+							routes.append('div')
+									.attr('class', 'routeInfo')
+									.html(function (d) {
+										return `
+										<p class="routeTitle">${d.departure} - ${d.arrival}</p>
+										<p class="routeProperty">${ 'Назва перевізника: ' + d.route_operator.split (',', 1) || ''}</p>
+									    `
+									});
 
 
-				            var loader = new PIXI.loaders.Loader();
-		loader
-			.add('marker', 'img/marker-icon.png');
+							var map = L.map('map').setView([50.440700, 30.521518], 8);
 
-		loader.load(function(loader, resources) {
-			window.markerTexture = resources.marker.texture;
+							$('#map').css('position', 'sticky')
 
-
-			var map = L.map('map').setView([50.440700, 30.521518], 8);
-			L.tileLayer('//stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {
+			var CartoDB_PositronOnlyLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
 				subdomains: 'abcd',
-				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-				minZoom: 2,
-				maxZoom: 18
+				maxZoom: 19
 			}).addTo(map);
-			map.attributionControl.setPosition('bottomleft');
-			map.zoomControl.setPosition('bottomright');
-			var pixiOverlay = (function() {
+
+
+			var geojsonMarkerOptions = {
+				radius: 4,
+				fillColor: "#808080",
+				color: "#000",
+				weight: 0,
+				opacity: 1,
+				fillOpacity: 0.8,
+				bubblingMouseEvents: false
+			};
+							var tree = rbush();
+
+
+
+
+							//created leaflet markers
+			var markers = L.geoJSON(geojson,{
+				pointToLayer: function (feature, latlng) {
+
+					try {
+						return L.circleMarker(latlng, geojsonMarkerOptions)
+					}
+					catch(err) {
+						debugger;
+					}
+
+				}
+			}).addTo(map);
+
+			var backgroundOverlay = (function() {
 				var frame = null;
 				var firstDraw = true;
 				var prevZoom;
 
-				// var markerLatLng = [51.5, -0.09];
-				// var marker = new PIXI.Sprite(markerTexture);
-				// marker.popup = L.popup({className: 'pixi-popup'})
-				// 	.setLatLng(markerLatLng)
-				// 	.setContent('<b>Hello world!</b><br>I am a popup.')
-				// 	.openOn(map);
+
+				var projectedPolygon;
+
 
 				var polygonLatLngs = [
 					[51.509, -0.08],
@@ -93,7 +177,6 @@
 					[51.51, -0.047],
 					[51.509, -0.08]
 				];
-				var projectedPolygon;
 
 				var circleCenter = [51.508, -0.11];
 				var projectedCenter;
@@ -101,25 +184,133 @@
 
 				var triangle = new PIXI.Graphics();
 				triangle.popup = L.popup()
-					.setLatLng([51.5095, -0.063])
-					.setContent('I am a polygon.');
+						.setLatLng([51.5095, -0.063])
+						.setContent('I am a polygon.');
 				var circle = new PIXI.Graphics();
 				circle.popup = L.popup()
-					.setLatLng(circleCenter)
-					.setContent('I am a circle.');
-
-				var line = new PIXI.Graphics();
-				// var lineCoord = [[[51.50874245880335, -0.11020660400390626],
-				// 				 [  51.5007286626542, -0.08977890014648438  ]], [[51.5095, -0.063],[51.509, -0.08]]];
+						.setLatLng(circleCenter)
+						.setContent('I am a circle.');
 
 
-				// [marker, triangle, circle, line].forEach(function(geo) {
-				// 	geo.interactive = true;
-				// });
 
 				var pixiContainer = new PIXI.Graphics();
 				pixiContainer.interactive = true;
 				pixiContainer.buttonMode = true;
+
+				var doubleBuffering = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+				return L.pixiOverlay(function(utils) {
+					if (frame) {
+						cancelAnimationFrame(frame);
+						frame = null;
+					}
+					var zoom = utils.getMap().getZoom();
+					var container = utils.getContainer();
+					var anotherContainer = utils.getContainer();
+					var renderer = utils.getRenderer();
+					var project = utils.latLngToLayerPoint;
+					var scale = utils.getScale();
+
+					if (firstDraw) {
+						var getRenderer = utils.getRenderer;
+						utils.getMap().on('click', function(e) {
+							// not really nice but much better than before
+							// good starting point for improvements
+							var interaction = utils.getRenderer().plugins.interaction;
+							var pointerEvent = e.originalEvent;
+							var pixiPoint = new PIXI.Point();
+							// get global click position in pixiPoint:
+							interaction.mapPositionToPoint(pixiPoint, pointerEvent.clientX, pointerEvent.clientY);
+							// get what is below the click if any:
+							var target = interaction.hitTest(pixiPoint, container);
+							if (target && target.popup) {
+								target.popup.openOn(map);
+							}
+						});
+
+						projectedPolygon = polygonLatLngs.map(function(coords) {return project(coords);});
+
+						projectedCenter = project(circleCenter);
+						circleRadius = circleRadius / scale;
+					}
+					if (firstDraw || prevZoom !== zoom) {
+
+						container.clear();
+
+						var stringToColour = function(str) {
+							var hash = 0;
+							for (var i = 0; i < str.length; i++) {
+								hash = str.charCodeAt(i) + ((hash << 5) - hash);
+							}
+							var colour = '#';
+							for (var i = 0; i < 3; i++) {
+								var value = (hash >> (i * 8)) & 0xFF;
+								colour += ('00' + value.toString(16)).substr(-2);
+							}
+							return colour;
+						};
+
+
+						lineCoord.forEach(function(d) {
+
+							var bounds;
+
+							// if false it would disappear
+							container.visible = true;
+
+
+							var color = '#7e6f6f';
+							container.beginFill(0xFF3300);
+							container.lineStyle((0.5/scale), color.replace('#', '0x'), 1);
+
+
+							// draw a shape
+							container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
+							container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+							container.endFill();
+
+							bounds = L.bounds(L.bounds(d.coords));
+
+							tree.insert({
+								minX: bounds.min.x,
+								minY: bounds.min.y,
+								maxX: bounds.max.x,
+								maxY: bounds.max.y,
+								feature: d
+							});
+
+
+						});
+
+
+					}
+
+					firstDraw = false;
+					prevZoom = zoom;
+					renderer.render(container);
+
+
+				}, pixiContainer, {
+					doubleBuffering: doubleBuffering,
+					autoPreventDefault: false
+				});
+			})();
+
+			var selectedOverlay = (function() {
+				var frame = null;
+				var firstDraw = true;
+				var prevZoom;
+
+
+				var pixiContainer = new PIXI.Graphics();
+				pixiContainer.interactive = true;
+				pixiContainer.buttonMode = true;
+				var selectedCity;
+				var selectedMarchRoute;
+				var selectedOperator;
+//				var selectedStatus = false;
+
+
 
 				var doubleBuffering = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -150,117 +341,210 @@
 								target.popup.openOn(map);
 							}
 						});
-						// var markerCoords = project(markerLatLng);
-						// marker.x = markerCoords.x;
-						// marker.y = markerCoords.y;
-						// marker.anchor.set(0.5, 1);
-						// marker.scale.set(1 / scale);
-						// marker.currentScale = 1 / scale;
-
-						projectedPolygon = polygonLatLngs.map(function(coords) {return project(coords);});
-
-						projectedCenter = project(circleCenter);
-						circleRadius = circleRadius / scale;
 					}
 					if (firstDraw || prevZoom !== zoom) {
 
 						container.clear();
 
-						// marker.currentScale = marker.scale.x;
-						// marker.targetScale = 1 / scale;
+//						var stringToColour = function(str) {
+//							var hash = 0;
+//							for (var i = 0; i < str.length; i++) {
+//								hash = str.charCodeAt(i) + ((hash << 5) - hash);
+//							}
+//							var colour = '#';
+//							for (var i = 0; i < 3; i++) {
+//								var value = (hash >> (i * 8)) & 0xFF;
+//								colour += ('00' + value.toString(16)).substr(-2);
+//							}
+//							return colour;
+//						};
 
-						// triangle.clear();
-						// triangle.lineStyle(3 / scale, 0x3388ff, 1);
-						// triangle.beginFill(0x3388ff, 0.2);
-						// triangle.x = projectedPolygon[0].x;
-						// triangle.y = projectedPolygon[0].y;
-						// projectedPolygon.forEach(function(coords, index) {
-						// 	if (index == 0) triangle.moveTo(0, 0);
-						// 	else triangle.lineTo(coords.x - triangle.x, coords.y - triangle.y);
-						// });
-						// triangle.endFill();
-
-						// window.triangle = triangle;
-
-						// circle.clear();
-						// circle.lineStyle(3 / scale, 0xff0000, 1);
-						// circle.beginFill(0xff0033, 0.5);
-						// circle.x = projectedCenter.x;
-						// circle.y = projectedCenter.y;
-						// circle.drawCircle(0, 0, circleRadius);
-						// circle.endFill();
+						drawSelectedCity(selectedCity);
 
 
-					
+						function drawSelectedCity(selectedCity) {
+							if (selectedCity) {
+								nested_names[selectedCity][0].values.forEach(function(d) {
 
-						var stringToColour = function(str) {
-						  var hash = 0;
-						  for (var i = 0; i < str.length; i++) {
-						    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-						  }
-						  var colour = '#';
-						  for (var i = 0; i < 3; i++) {
-						    var value = (hash >> (i * 8)) & 0xFF;
-						    colour += ('00' + value.toString(16)).substr(-2);
-						  }
-						  return colour;
-						};
+									if (d.coords != 'NO') {
+										container.visible = true;
+
+										var color = '#ea3e13';
+										container.beginFill(0xFF3300);
+										container.lineStyle((3/scale), color.replace('#', '0x'), 1);
 
 
+										// draw a shape
+										container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
+										container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+										container.endFill();
 
-						lineCoord.forEach(function(d) {
+									}
+//								renderer.render(container);
 
+								})
+							}
+						}
 
-							// if false it would disappear
-							container.visible = true;
+						if (selectedMarchRoute) {
+							createLine(selectedMarchRoute);
+						}
 
-
-//							var lineWidth = (1/scale < 3) ? 1/scale : 3;
-							console.log(1/scale);
-
-							var color = '#FF0000';
-							container.beginFill(0xFF3300);
-							container.lineStyle((1/scale)/2, color.replace('#', '0x'), 1);
-							
+						if (selectedOperator) {
+							nested_operators['$' + selectedOperator].map(d => {
+								var color = '#ea3e13';
+							container.lineStyle((3/scale), color.replace('#', '0x'), 1);
 
 							// draw a shape
 							container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
 							container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
 							container.endFill();
+						})
 
-							// line.addChild(line);
+						}
+
+						cityNames.on('click', function () {
+
+							container.clear();
+
+							var $t = $(this);
+
+							selectedCity = "$"+$t.text();
+
+							if ( $t.hasClass('open') ) {
+								$t.siblings('.route')
+										.slideUp();
+								$t.removeClass('open');
+							} else {
+								$('.route').slideUp('slow', function () {
+									setTimeout(2000);
+
+									var topOff = $t.offset().top;
+									$(window).scrollTop(topOff);
+								});
+								$('.open').removeClass('open');
+								$t.siblings('.route')
+										.slideDown('slow', function () {
+											$(this).css('display', 'block');
+										});
+								$t.addClass('open');
+							}
+
+							drawSelectedCity(selectedCity)
+							renderer.render(container);
 						});
 
-						// line.clear()
-						// line.lineStyle(0.2, 0xffd900, 1);
+						
+						markers.on('click', function (d) {
 
-						// // draw a shape
-						// line.moveTo(project(lineCoord[0]).x, project(lineCoord[0]).y);
-						// line.lineTo(project(lineCoord[1]).x, project(lineCoord[1]).y);
-						// line.endFill();
+								container.clear();
+
+								selectedCity = '$' + d.sourceTarget.feature.properties[0];
+
+								nested_names[selectedCity][0].values.forEach(function (d) {
+
+									if (d.coords != 'NO') {
+										container.visible = true;
+
+										var color = '#ea3e13';
+										container.lineStyle((3/scale), color.replace('#', '0x'), 1);
+
+
+										// draw a shape
+										container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
+										container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+										container.endFill();
+									}
+								});
+
+							renderer.render(container);
+							selectedMarchRoute = undefined;
+
+						});
+
+						map.on('click', function (d) {
+
+								var possibleRoutes = findRoute(d.latlng);
+								var result = measureDistance(d.latlng, possibleRoutes);
+								createLine(result[0]);
+
+								selectedMarchRoute = result[0];
+
+
+						});
+
+						map.on('mousemove', function (d) {
+							var possibleRoutes = findRoute(d.latlng);
+							var result = measureDistance(d.latlng, possibleRoutes);
+
+							if (result[1] === true) {
+								document.getElementById('map').style.cursor = 'pointer';
+							}
+							else {
+								document.getElementById('map').style.cursor = '';
+							}
+
+						});
+
+
+						function findRoute(latlng) {
+							// alert(point.x+ " " +point.y);
+							var features = tree.search({
+								minX: latlng.lat,
+								minY: latlng.lng,
+								maxX: latlng.lat,
+								maxY: latlng.lng
+							});
+
+							return features
+
+						}
+
+						function measureDistance(point, possibleRoutes) {
+							var current, state;
+
+
+							possibleRoutes.forEach(function (d) {
+								var pt = turf.point([point.lat, point.lng]);
+								var line = turf.lineString([d.feature.coords[0],d.feature.coords[1]]);
+
+								var distance = turf.pointToLineDistance(pt, line, {units: 'miles'});
+
+								var distProportion = 5/Math.pow(2, zoom-8);
+
+								if (distance > distProportion) return;
+
+								if (!current || distance < current.dist)
+								{
+									current = {'dist': distance, 'feature': d.feature};
+									state = true;
+								}
+
+							});
+
+							return [current, state] ;
+
+						}
+
+						function createLine(current) {
+
+							container.clear();
+
+							var color = '#ea3e13';
+							//var widthProportion = 0.5/Math.pow(2, zoom-8);
+
+							container.lineStyle(3/scale, color.replace('#', '0x'), 1);
+
+
+							// draw a shape
+							container.moveTo(project(current.feature.coords[0]).x, project(current.feature.coords[0]).y);
+							container.lineTo(project(current.feature.coords[1]).x, project(current.feature.coords[1]).y);
+							container.endFill();
+
+							renderer.render(container);
+							return
+						}
 					}
-
-
-//					var duration = 100;
-//					var start;
-//					function animate(timestamp) {
-//						var progress;
-//					  if (start === null) start = timestamp;
-//					  progress = timestamp - start;
-//					  var lambda = progress / duration;
-//					  if (lambda > 1) lambda = 1;
-//					  lambda = lambda * (0.4 + lambda * (2.2 + lambda * -1.6));
-//					  marker.scale.set(marker.currentScale + lambda * (marker.targetScale - marker.currentScale));
-//						renderer.render(container);
-//					  if (progress < duration) {
-//					    frame = requestAnimationFrame(animate);
-//					  }
-//					}
-//
-//					if (!firstDraw && prevZoom !== zoom) {
-//						start = null;
-//						frame = requestAnimationFrame(animate);
-//					}
 
 					firstDraw = false;
 					prevZoom = zoom;
@@ -273,212 +557,14 @@
 				});
 			})();
 
-			pixiOverlay.addTo(map);
+							backgroundOverlay.addTo(map);
+			selectedOverlay.addTo(map);
+							map.removeLayer(CartoDB_PositronOnlyLabels);
 
-		});
 
-				        })
+
+						})
 				  });
-
-
-// old code
-	//Old code
-//	(function() {
-//		// var loader = new PIXI.loaders.Loader();
-//		// loader
-//		// 	.add('marker', 'img/marker-icon.png');
-//
-//		// loader.load(function(loader, resources) {
-//		// 	window.markerTexture = resources.marker.texture;
-//
-//
-//		// 	var map = L.map('map').setView([51.505, -0.09], 14);
-//		// 	L.tileLayer('//stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {
-//		// 		subdomains: 'abcd',
-//		// 		attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-//		// 		minZoom: 2,
-//		// 		maxZoom: 18
-//		// 	}).addTo(map);
-//		// 	map.attributionControl.setPosition('bottomleft');
-//		// 	map.zoomControl.setPosition('bottomright');
-//		// 	var pixiOverlay = (function() {
-//		// 		var frame = null;
-//		// 		var firstDraw = true;
-//		// 		var prevZoom;
-//
-//		// 		var markerLatLng = [51.5, -0.09];
-//		// 		var marker = new PIXI.Sprite(markerTexture);
-//		// 		marker.popup = L.popup({className: 'pixi-popup'})
-//		// 			.setLatLng(markerLatLng)
-//		// 			.setContent('<b>Hello world!</b><br>I am a popup.')
-//		// 			.openOn(map);
-//
-//		// 		var polygonLatLngs = [
-//		// 			[51.509, -0.08],
-//		// 			[51.503, -0.06],
-//		// 			[51.51, -0.047],
-//		// 			[51.509, -0.08]
-//		// 		];
-//		// 		var projectedPolygon;
-//
-//		// 		var circleCenter = [51.508, -0.11];
-//		// 		var projectedCenter;
-//		// 		var circleRadius = 85;
-//
-//		// 		var triangle = new PIXI.Graphics();
-//		// 		triangle.popup = L.popup()
-//		// 			.setLatLng([51.5095, -0.063])
-//		// 			.setContent('I am a polygon.');
-//		// 		var circle = new PIXI.Graphics();
-//		// 		circle.popup = L.popup()
-//		// 			.setLatLng(circleCenter)
-//		// 			.setContent('I am a circle.');
-//
-//		// 		var line = new PIXI.Graphics();
-//		// 		var lineCoord = [[[51.50874245880335, -0.11020660400390626],
-//		// 						 [  51.5007286626542, -0.08977890014648438  ]], [[51.5095, -0.063],[51.509, -0.08]]];
-//
-//
-//		// 		// [marker, triangle, circle, line].forEach(function(geo) {
-//		// 		// 	geo.interactive = true;
-//		// 		// });
-//
-//		// 		var pixiContainer = new PIXI.Container();
-//		// 		pixiContainer.addChild(marker, triangle, circle);
-//		// 		pixiContainer.interactive = true;
-//		// 		pixiContainer.buttonMode = true;
-//
-//		// 		var doubleBuffering = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-//
-//		// 		return L.pixiOverlay(function(utils) {
-//		// 			if (frame) {
-//		// 				cancelAnimationFrame(frame);
-//		// 				frame = null;
-//		// 			}
-//		// 			var zoom = utils.getMap().getZoom();
-//		// 			var container = utils.getContainer();
-//		// 			var renderer = utils.getRenderer();
-//		// 			var project = utils.latLngToLayerPoint;
-//		// 			var scale = utils.getScale();
-//
-//		// 			if (firstDraw) {
-//		// 				var getRenderer = utils.getRenderer;
-//		// 				utils.getMap().on('click', function(e) {
-//		// 					// not really nice but much better than before
-//		// 					// good starting point for improvements
-//		// 					var interaction = utils.getRenderer().plugins.interaction;
-//		// 					var pointerEvent = e.originalEvent;
-//		// 					var pixiPoint = new PIXI.Point();
-//		// 					// get global click position in pixiPoint:
-//		// 					interaction.mapPositionToPoint(pixiPoint, pointerEvent.clientX, pointerEvent.clientY);
-//		// 					// get what is below the click if any:
-//		// 					var target = interaction.hitTest(pixiPoint, container);
-//		// 					if (target && target.popup) {
-//		// 						target.popup.openOn(map);
-//		// 					}
-//		// 				});
-//		// 				var markerCoords = project(markerLatLng);
-//		// 				marker.x = markerCoords.x;
-//		// 				marker.y = markerCoords.y;
-//		// 				marker.anchor.set(0.5, 1);
-//		// 				marker.scale.set(1 / scale);
-//		// 				marker.currentScale = 1 / scale;
-//
-//		// 				projectedPolygon = polygonLatLngs.map(function(coords) {return project(coords);});
-//
-//		// 				projectedCenter = project(circleCenter);
-//		// 				circleRadius = circleRadius / scale;
-//		// 			}
-//		// 			if (firstDraw || prevZoom !== zoom) {
-//		// 				marker.currentScale = marker.scale.x;
-//		// 				marker.targetScale = 1 / scale;
-//
-//		// 				triangle.clear();
-//		// 				triangle.lineStyle(3 / scale, 0x3388ff, 1);
-//		// 				triangle.beginFill(0x3388ff, 0.2);
-//		// 				triangle.x = projectedPolygon[0].x;
-//		// 				triangle.y = projectedPolygon[0].y;
-//		// 				projectedPolygon.forEach(function(coords, index) {
-//		// 					if (index == 0) triangle.moveTo(0, 0);
-//		// 					else triangle.lineTo(coords.x - triangle.x, coords.y - triangle.y);
-//		// 				});
-//		// 				triangle.endFill();
-//
-//		// 				window.triangle = triangle;
-//
-//		// 				circle.clear();
-//		// 				circle.lineStyle(3 / scale, 0xff0000, 1);
-//		// 				circle.beginFill(0xff0033, 0.5);
-//		// 				circle.x = projectedCenter.x;
-//		// 				circle.y = projectedCenter.y;
-//		// 				circle.drawCircle(0, 0, circleRadius);
-//		// 				circle.endFill();
-//
-//		// 				lineCoord.forEach(function(d) {
-//		// 					var line = new PIXI.Graphics();
-//
-//		// 					line.clear()
-//		// 					line.lineStyle(0.2, 0xffd900, 1);
-//
-//		// 					// draw a shape
-//		// 					line.moveTo(project(d[0]).x, project(d[0]).y);
-//		// 					line.lineTo(project(d[1]).x, project(d[1]).y);
-//		// 					line.endFill();
-//
-//		// 					pixiContainer.addChild(line);
-//
-//
-//		// 				})
-//
-//		// 				// line.clear()
-//		// 				// line.lineStyle(0.2, 0xffd900, 1);
-//
-//		// 				// // draw a shape
-//		// 				// line.moveTo(project(lineCoord[0]).x, project(lineCoord[0]).y);
-//		// 				// line.lineTo(project(lineCoord[1]).x, project(lineCoord[1]).y);
-//		// 				// line.endFill();
-//
-//
-//
-//		// 			}
-//
-//		// 			map.on('click', function(event) {
-//		// 				console.log(project(event.latlng));
-//		// 				console.log(event.latlng);
-//		// 			})
-//
-//		// 			var duration = 100;
-//		// 			var start;
-//		// 			function animate(timestamp) {
-//		// 				var progress;
-//		// 			  if (start === null) start = timestamp;
-//		// 			  progress = timestamp - start;
-//		// 			  var lambda = progress / duration;
-//		// 			  if (lambda > 1) lambda = 1;
-//		// 			  lambda = lambda * (0.4 + lambda * (2.2 + lambda * -1.6));
-//		// 			  marker.scale.set(marker.currentScale + lambda * (marker.targetScale - marker.currentScale));
-//		// 				renderer.render(container);
-//		// 			  if (progress < duration) {
-//		// 			    frame = requestAnimationFrame(animate);
-//		// 			  }
-//		// 			}
-//
-//		// 			if (!firstDraw && prevZoom !== zoom) {
-//		// 				start = null;
-//		// 				frame = requestAnimationFrame(animate);
-//		// 			}
-//
-//		// 			firstDraw = false;
-//		// 			prevZoom = zoom;
-//		// 			renderer.render(container);
-//		// 		}, pixiContainer, {
-//		// 			doubleBuffering: doubleBuffering,
-//		// 			autoPreventDefault: false
-//		// 		});
-//		// 	})();
-//		// 	pixiOverlay.addTo(map);
-//		// });
-//	})();
 
 </script>
 </body>
