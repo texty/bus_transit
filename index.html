@@ -388,6 +388,8 @@
 										container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
 										container.endFill();
 
+										map.flyTo([ d.coords[0][0], d.coords[0][1]], 6);
+
 									}
 //
 								})
@@ -405,8 +407,13 @@
 
 							if (selectedMarchRoute) {
 								createLine(selectedMarchRoute);
+								map.flyTo([ selectedMarchRoute.feature.coords[0][0], selectedMarchRoute.feature.coords[0][1] ], 6);
+
 							}
 							renderer.render(container);
+
+//							map.setView([ d.coords[0].x, d.coords[0].y ], 6);
+
 						}
 
 						function drawSelectedOperator(selectedOperator) {
@@ -424,10 +431,15 @@
 								container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
 								container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
 								container.endFill();
+
+								map.flyTo([ d.coords[0][0], d.coords[0][1] ], 6);
+
 							})
 
 							}
 							renderer.render(container);
+
+//							map.setView([ d.coords[0].x, d.coords[0].y ], 6);
 						}
 
 						d3.selectAll('p.routeProperty').on('click', function (d) {
