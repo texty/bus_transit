@@ -24,7 +24,7 @@ main {
     flex-wrap: wrap; }
     main .table div.city {
       margin: 1em;
-      padding: 1.5em;
+      padding: 0.5em;
       border: 1px solid #929292; }
       main .table div.city .routeProperty {
         font-size: smaller;

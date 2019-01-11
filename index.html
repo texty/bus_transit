@@ -499,8 +499,6 @@
 
 								selectedCity = '$' + d.sourceTarget.feature.properties[0];
 
-//							selected = {'name': 'selectedCity', 'data': '$' + d.sourceTarget.feature.properties[0]};
-
 
 							nested_names[selectedCity][0].values.forEach(function (d) {
 
@@ -519,8 +517,9 @@
 								});
 
 							renderer.render(container);
-							selectedMarchRoute = undefined;
 
+							$("#"+d.sourceTarget.feature.properties[0] + " .cityTitle")
+									.click();
 						});
 
 						map.on('click', function (d) {
@@ -531,6 +530,31 @@
 								createLine(result[0]);
 
 								selectedMarchRoute = result[0];
+
+							var $t = $("#" + result[0].feature.departure + " .cityTitle");
+
+							if ( $t.hasClass('open') ) {
+								$t.siblings('.route')
+										.slideUp();
+								$t.removeClass('open');
+							} else {
+								$('.route').slideUp('slow', function () {
+									setTimeout(2000);
+
+									var topOff = $t.offset().top;
+									$(window).scrollTop(topOff);
+								});
+								$('.open').removeClass('open');
+								$t.siblings('.route')
+										.slideDown('slow', function () {
+											$(this).css('display', 'block');
+										});
+								$t.addClass('open');
+							}
+
+
+
+
 
 
 						});
@@ -592,7 +616,6 @@
 							container.clear();
 
 							var color = '#ea3e13';
-							//var widthProportion = 0.5/Math.pow(2, zoom-8);
 
 							container.lineStyle(3/scale, color.replace('#', '0x'), 1);
 
