@@ -73,6 +73,7 @@
 				                    return {
 				                        'departure':name.first,
 										'arrival': name.second,
+										'marchRoute': name.first + " - " + name.second,
 										'route_operator': name.route_operator,
 				                        'coords': [[+nested_data['$' + name.first.trim()][0].Lat, +nested_data['$' + name.first.trim()][0].Long], [+nested_data['$' + name.second.trim()][0].Lat, +nested_data['$' + name.second.trim()][0].Long]]
 				                    }
@@ -87,8 +88,11 @@
 				            	return d != 'no'
 				            });
 							
-							var nested_cities = d3.nest().key(function(d) {return d.departure;}).map(result);
+//							var nested_cities = d3.nest().key(function(d) {return d.departure;}).map(result);
 							var nested_operators = d3.nest().key(function(d) {return d.route_operator;}).map(result);
+							var nested_march_routes = d3.nest().key(function(d) {return d.marchRoute;}).map(result);
+
+
 
 							var operator_names = d3.map(function(d) {return d.route_operator;}).entries(result);
 							var city_names = d3.nest().key(function(d) {return d.departure;}).entries(result)
@@ -99,7 +103,10 @@
 									.data(city_names)
 									.enter()
 									.append("div")
-									.attr('class', 'city');
+									.attr('class', 'city')
+									.attr('id', function (d) {
+										return d.key
+									});
 
 							var cityNames = cities.append('div')
 									.text(d => d.key)
@@ -118,19 +125,20 @@
 									.html(function (d) {
 										return `
 										<p class="routeTitle">${d.departure} - ${d.arrival}</p>
-										<p class="routeProperty">${ 'Назва перевізника: ' + d.route_operator.split (',', 1) || ''}</p>
+										<p class="routeProperty">${ d.route_operator || ''}</p>
 									    `
 									});
 
 
-							var map = L.map('map').setView([50.440700, 30.521518], 8);
+							var map = L.map('map').setView([50.440700, 30.521518], 6);
 
 							$('#map').css('position', 'sticky')
 
 			var CartoDB_PositronOnlyLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
 				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
 				subdomains: 'abcd',
-				maxZoom: 19
+				maxZoom: 7,
+				minZoom: 4
 			}).addTo(map);
 
 
@@ -305,11 +313,12 @@
 				var pixiContainer = new PIXI.Graphics();
 				pixiContainer.interactive = true;
 				pixiContainer.buttonMode = true;
+
 				var selectedCity;
 				var selectedMarchRoute;
 				var selectedOperator;
-//				var selectedStatus = false;
 
+				var selected;
 
 
 				var doubleBuffering = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -344,27 +353,27 @@
 					}
 					if (firstDraw || prevZoom !== zoom) {
 
-						container.clear();
 
-//						var stringToColour = function(str) {
-//							var hash = 0;
-//							for (var i = 0; i < str.length; i++) {
-//								hash = str.charCodeAt(i) + ((hash << 5) - hash);
-//							}
-//							var colour = '#';
-//							for (var i = 0; i < 3; i++) {
-//								var value = (hash >> (i * 8)) & 0xFF;
-//								colour += ('00' + value.toString(16)).substr(-2);
-//							}
-//							return colour;
-//						};
+						if (!selected || selected.name == 'selectedCity') {
+							drawSelectedCity(selectedCity);
+						}
+						if (!selected || selected.name == 'selectedMarchRoute') {
+							drawSelectedMarchRoute(selectedMarchRoute);
+						}
+						if (!selected || selected.name == 'selectedOperator') {
+							drawSelectedOperator(selectedOperator);
+						}
 
-						drawSelectedCity(selectedCity);
 
 
 						function drawSelectedCity(selectedCity) {
+							selectedOperator = undefined;
+							selectedMarchRoute = undefined;
+
+							container.clear();
+
 							if (selectedCity) {
-								nested_names[selectedCity][0].values.forEach(function(d) {
+								nested_names[selectedCity.trim()][0].values.forEach(function(d) {
 
 									if (d.coords != 'NO') {
 										container.visible = true;
@@ -380,28 +389,65 @@
 										container.endFill();
 
 									}
-//								renderer.render(container);
-
+//
 								})
 							}
-						}
 
-						if (selectedMarchRoute) {
-							createLine(selectedMarchRoute);
-						}
-
-						if (selectedOperator) {
-							nested_operators['$' + selectedOperator].map(d => {
-								var color = '#ea3e13';
-							container.lineStyle((3/scale), color.replace('#', '0x'), 1);
-
-							// draw a shape
-							container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
-							container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
-							container.endFill();
-						})
+							renderer.render(container);
 
 						}
+
+						function drawSelectedMarchRoute(selectedMarchRoute) {
+							selectedOperator = undefined;
+							selectedCity = undefined;
+
+							container.clear();
+
+							if (selectedMarchRoute) {
+								createLine(selectedMarchRoute);
+							}
+							renderer.render(container);
+						}
+
+						function drawSelectedOperator(selectedOperator) {
+							selectedCity = undefined;
+							selectedMarchRoute = undefined;
+
+							container.clear();
+
+							if (selectedOperator) {
+								nested_operators['$' + selectedOperator].map(d => {
+									var color = '#ea3e13';
+								container.lineStyle((3/scale), color.replace('#', '0x'), 1);
+
+								// draw a shape
+								container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
+								container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+								container.endFill();
+							})
+
+							}
+							renderer.render(container);
+						}
+
+						d3.selectAll('p.routeProperty').on('click', function (d) {
+
+							selectedOperator = this.textContent;
+
+							selected = {'name': 'selectedOperator', 'data': this.textContent};
+
+							drawSelectedOperator(selectedOperator);
+						});
+
+						d3.selectAll('p.routeTitle').on('click', function (d) {
+
+							selectedMarchRoute = {'dist': 0, 'feature': nested_march_routes['$' + this.textContent][0]};
+
+							selected = {'name': 'selectedMarchRoute', 'data': {'dist': 0, 'feature': nested_march_routes['$' + this.textContent][0]}};
+
+
+							drawSelectedMarchRoute(selectedMarchRoute);
+						});
 
 						cityNames.on('click', function () {
 
@@ -410,6 +456,8 @@
 							var $t = $(this);
 
 							selectedCity = "$"+$t.text();
+
+							selected = {'name': 'selectedCity', 'data': "$"+$t.text()};
 
 							if ( $t.hasClass('open') ) {
 								$t.siblings('.route')
@@ -430,10 +478,8 @@
 								$t.addClass('open');
 							}
 
-							drawSelectedCity(selectedCity)
-							renderer.render(container);
+							drawSelectedCity(selectedCity);
 						});
-
 						
 						markers.on('click', function (d) {
 
@@ -441,7 +487,10 @@
 
 								selectedCity = '$' + d.sourceTarget.feature.properties[0];
 
-								nested_names[selectedCity][0].values.forEach(function (d) {
+//							selected = {'name': 'selectedCity', 'data': '$' + d.sourceTarget.feature.properties[0]};
+
+
+							nested_names[selectedCity][0].values.forEach(function (d) {
 
 									if (d.coords != 'NO') {
 										container.visible = true;
@@ -466,6 +515,7 @@
 
 								var possibleRoutes = findRoute(d.latlng);
 								var result = measureDistance(d.latlng, possibleRoutes);
+
 								createLine(result[0]);
 
 								selectedMarchRoute = result[0];
@@ -485,7 +535,6 @@
 							}
 
 						});
-
 
 						function findRoute(latlng) {
 							// alert(point.x+ " " +point.y);
@@ -544,6 +593,9 @@
 							renderer.render(container);
 							return
 						}
+
+						console.log(selected);
+
 					}
 
 					firstDraw = false;
@@ -560,6 +612,7 @@
 							backgroundOverlay.addTo(map);
 			selectedOverlay.addTo(map);
 							map.removeLayer(CartoDB_PositronOnlyLabels);
+							map.setView([50.440700, 30.521518], 6);
 
 
 

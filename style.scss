@@ -1,6 +1,10 @@
 $fontcol: #111111;
 $bgcol: #f1f1f1;
-$accentcol: #6892ff;
+//$accentcol: #6892ff;
+$accentcol: #929292;
+$accentcolorange: #ea3e13;
+
+
 
 body {
   font-family: sans-serif;
@@ -46,14 +50,22 @@ main {
 
       }
 
+      div.cityTitle, p.routeTitle, p.routeProperty {
+        cursor: pointer;
+      }
+
       .cityTitle {
         background: transparent;
         padding: 0.5em;
         transition: all 1.5s;
 
         &.open {
-          background-color: $accentcol;
+          background-color: $accentcolorange;
         }
+      }
+
+      .route {
+        padding: 0.5em;
       }
     }
   }

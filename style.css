@@ -25,15 +25,19 @@ main {
     main .table div.city {
       margin: 1em;
       padding: 1.5em;
-      border: 1px solid #6892ff; }
+      border: 1px solid #929292; }
       main .table div.city .routeProperty {
         font-size: smaller;
         color: grey; }
+      main .table div.city div.cityTitle, main .table div.city p.routeTitle, main .table div.city p.routeProperty {
+        cursor: pointer; }
       main .table div.city .cityTitle {
         background: transparent;
         padding: 0.5em;
         transition: all 1.5s; }
         main .table div.city .cityTitle.open {
-          background-color: #6892ff; }
+          background-color: #ea3e13; }
+      main .table div.city .route {
+        padding: 0.5em; }
 
 /*# sourceMappingURL=style.css.map */
