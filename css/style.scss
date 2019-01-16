@@ -1,0 +1,86 @@
+$fontcol: #111111;
+$bgcol: #f1f1f1;
+//$accentcol: #6892ff;
+$accentcol: #929292;
+$accentcolorange: #ea3e13;
+
+
+
+body {
+  font-family: sans-serif;
+  color: $fontcol;
+  background: $bgcol;
+  margin: 0;
+  padding: 0;
+
+  * {
+    box-sizing: border-box;
+    outline-style: none;
+  }
+}
+
+main {
+  display: grid;
+  grid-template-columns: 5fr 2fr;
+
+  figure {
+    padding: 0;
+    margin: 0;
+  }
+
+  #map {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  div.search {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: $bgcol;
+    padding: 0.5em;
+  }
+
+  .table {
+    //display: flex;
+    //flex-wrap: wrap;
+
+    .route {
+      padding: 0.5em;
+      margin: 0.5em;
+      padding: 0.3em;
+      border: 1px solid $accentcol;
+    }
+
+
+    p.routeProperty {
+      display: none;
+      font-size: smaller;
+      color: grey;
+    }
+
+    div.cityTitle, p.routeTitle, p.routeProperty {
+      cursor: pointer;
+    }
+
+    .cityTitle {
+      background: transparent;
+      //padding: 0.5em;
+      transition: all 1.5s;
+
+      &.open {
+        background-color: $accentcolorange;
+      }
+    }
+
+    div.city {
+      margin: 0.5em;
+      padding: 0.3em;
+      border: 1px solid $accentcol;
+
+    }
+  }
+}
+

@@ -1,0 +1,49 @@
+body {
+  font-family: sans-serif;
+  color: #111111;
+  background: #f1f1f1;
+  margin: 0;
+  padding: 0; }
+  body * {
+    box-sizing: border-box;
+    outline-style: none; }
+
+main {
+  display: grid;
+  grid-template-columns: 5fr 2fr; }
+  main figure {
+    padding: 0;
+    margin: 0; }
+  main #map {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    height: 100vh; }
+  main div.search {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: #f1f1f1;
+    padding: 0.5em; }
+  main .table .route {
+    padding: 0.5em;
+    margin: 0.5em;
+    padding: 0.3em;
+    border: 1px solid #929292; }
+  main .table p.routeProperty {
+    display: none;
+    font-size: smaller;
+    color: grey; }
+  main .table div.cityTitle, main .table p.routeTitle, main .table p.routeProperty {
+    cursor: pointer; }
+  main .table .cityTitle {
+    background: transparent;
+    transition: all 1.5s; }
+    main .table .cityTitle.open {
+      background-color: #ea3e13; }
+  main .table div.city {
+    margin: 0.5em;
+    padding: 0.3em;
+    border: 1px solid #929292; }
+
+/*# sourceMappingURL=style.css.map */
