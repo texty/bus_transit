@@ -577,8 +577,10 @@ d3.csv('names_without_dupicates.csv')
                                         $t.addClass('open')
                                     }
 
-                                    var topOff = $t.offset().top - 150;
-                                    $(window).scrollTop(topOff);
+                                    // var topOff = $t.offset().top - 150;
+                                    // $(window).scrollTop(0);
+
+                                    window.scrollTo(0, 0);
 
                                     var number = $(this).siblings('.routeProperty')[0].attributes.data;
                                     var res = march_route_list.values.filter(d => {return d.id == number.textContent})[0];
