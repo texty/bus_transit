@@ -114,6 +114,7 @@ d3.csv('names_without_dupicates.csv')
 
                 var map = L.map('map').setView([49.272021, 31.437523], 6);
 
+
                 $('#map').css('position', 'sticky');
 
                 // var CartoDB_PositronOnlyLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
@@ -126,12 +127,14 @@ d3.csv('names_without_dupicates.csv')
 
                 var gl = L.mapboxGL({
                     accessToken: 'pk.eyJ1IjoiZHJpbWFjdXMxODIiLCJhIjoiWGQ5TFJuayJ9.6sQHpjf_UDLXtEsz8MnjXw',
-                    maxZoom: 7,
-                    minZoom: 4,
+                    maxZoom: 9,
+                    minZoom: 6,
                     style: 'klokantech-basic.json'
                     // style: 'data/labels.json',
                     // pane: 'tilePane'
                 }).addTo(map);
+
+                // L.control.zoom.position('topright');
 
 
                 var geojsonMarkerOptions = {
@@ -684,4 +687,14 @@ function createSideNav(march_route_list) {
 
 }
 
+
+
+d3.xml("img/hexmap.svg", {crossOrigin: "anonymous"}).then(function(xml) {
+    var navMap = d3.select("#meta-navigation").node().appendChild(xml.documentElement);
+
+    navMap.on('click', function (d) {
+        alert('g')
+    });
+
+});
 
