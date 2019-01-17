@@ -19,68 +19,158 @@ body {
   }
 }
 
+
 main {
+  //height: 90vh;
   display: grid;
   grid-template-columns: 5fr 2fr;
+
+  div#header-map {
+    height: 100vh;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+
+
+  }
+
+
+
+  header {
+    //height: 5vh;
+    margin: 0;
+
+    h3 {
+      margin: 1em;
+    }
+  }
 
   figure {
     padding: 0;
     margin: 0;
   }
 
-  #map {
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    height: 100vh;
-  }
+  //#map {
+  //  position: sticky;
+  //  position: -webkit-sticky;
+  //  top: 0;
+  //  height: 100vh;
+  //}
 
-  div.search {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background-color: $bgcol;
-    padding: 0.5em;
-  }
+  div.navigation {
 
-  .table {
-    //display: flex;
-    //flex-wrap: wrap;
-
-    .route {
+    div.search {
+      //position: sticky;
+      //top: 0;
+      width: 100%;
+      background-color: $bgcol;
       padding: 0.5em;
-      margin: 0.5em;
-      padding: 0.3em;
-      border: 1px solid $accentcol;
-    }
 
+      .tt-input, /* UPDATE: newer versions use tt-input instead of tt-query */
+      .tt-hint {
+        //width: 396px;
+        height: 1.5em;
+        padding: 0.4em 0.4em;
+        font-size: 1em;
+        line-height: 1.5em;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        outline: none;
+      }
 
-    p.routeProperty {
-      display: none;
-      font-size: smaller;
-      color: grey;
-    }
+      .tt-input { /* UPDATE: newer versions use tt-input instead of tt-query */
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      }
 
-    div.cityTitle, p.routeTitle, p.routeProperty {
-      cursor: pointer;
-    }
+      .tt-hint {
+        color: #999;
+      }
 
-    .cityTitle {
-      background: transparent;
-      //padding: 0.5em;
-      transition: all 1.5s;
+      .tt-menu { /* UPDATE: newer versions use tt-menu instead of tt-dropdown-menu */
+        width: 422px;
+        margin-top: 12px;
+        padding: 8px 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        box-shadow: 0 5px 10px rgba(0,0,0,.2);
+        cursor: pointer;
+      }
 
-      &.open {
-        background-color: $accentcolorange;
+      .tt-suggestion {
+        padding: 3px 20px;
+        font-size: 18px;
+        line-height: 24px;
+      }
+
+      .tt-suggestion.tt-is-under-cursor { /* UPDATE: newer versions use .tt-suggestion.tt-cursor */
+        color: #fff;
+        background-color: #0097cf;
+
+      }
+
+      .tt-suggestion p {
+        margin: 0;
       }
     }
 
-    div.city {
-      margin: 0.5em;
-      padding: 0.3em;
-      border: 1px solid $accentcol;
+    .table {
+      //display: flex;
+      //flex-wrap: wrap;
+      padding: 0.5em;
 
+      .route {
+        padding: 0.5em;
+        margin: 0.5em;
+        padding: 0.3em;
+        border: 1px solid $accentcol;
+      }
+
+
+      p.routeProperty {
+        display: none;
+        font-size: 0.9em;
+        color: grey;
+      }
+
+      div.cityTitle, p.routeTitle, p.routeProperty {
+        cursor: pointer;
+      }
+
+      .cityTitle {
+        border: 1px solid $accentcol;
+        //margin: 0.5em;
+        padding: 0.3em;
+
+        //padding: 0.5em;
+        transition: all 1.5s;
+      }
+
+      p.routeTitle.open {
+        background-color: $accentcolorange;
+        margin-block-start: 0;
+        margin-block-end: 0;
+      }
+
+      p.routeTitle {
+        margin-block-start: 0.5em;
+        margin-block-end: 0.5em;
+      }
+
+      div.city {
+        //margin: 0.5em;
+        padding: 0.3em;
+        border: 1px solid $accentcol;
+
+      }
     }
+
   }
+
+
 }
 

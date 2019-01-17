@@ -116,11 +116,21 @@ d3.csv('names_without_dupicates.csv')
 
                 $('#map').css('position', 'sticky');
 
-                var CartoDB_PositronOnlyLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                    subdomains: 'abcd',
+                // var CartoDB_PositronOnlyLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+                //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                //     subdomains: 'abcd',
+                //     maxZoom: 7,
+                //     minZoom: 4
+                // }).addTo(map);
+
+
+                var gl = L.mapboxGL({
+                    accessToken: 'pk.eyJ1IjoiZHJpbWFjdXMxODIiLCJhIjoiWGQ5TFJuayJ9.6sQHpjf_UDLXtEsz8MnjXw',
                     maxZoom: 7,
-                    minZoom: 4
+                    minZoom: 4,
+                    style: 'klokantech-basic.json'
+                    // style: 'data/labels.json',
+                    // pane: 'tilePane'
                 }).addTo(map);
 
 
@@ -198,6 +208,7 @@ d3.csv('names_without_dupicates.csv')
                         var project = utils.latLngToLayerPoint;
                         var scale = utils.getScale();
 
+
                         if (firstDraw) {
                             var getRenderer = utils.getRenderer;
                             utils.getMap().on('click', function (e) {
@@ -225,6 +236,8 @@ d3.csv('names_without_dupicates.csv')
                         if (firstDraw || prevZoom !== zoom) {
 
                             container.clear();
+
+                            container.beginFill(0x00CCFF);
 
                             var stringToColour = function (str) {
                                 var hash = 0;
@@ -317,6 +330,8 @@ d3.csv('names_without_dupicates.csv')
                         var scale = utils.getScale();
 
                         if (firstDraw) {
+
+
                             var getRenderer = utils.getRenderer;
                             utils.getMap().on('click', function (e) {
                                 // not really nice but much better than before
@@ -631,7 +646,6 @@ d3.csv('names_without_dupicates.csv')
 
                 backgroundOverlay.addTo(map);
                 selectedOverlay.addTo(map);
-                map.removeLayer(CartoDB_PositronOnlyLabels);
 
             })
     });
@@ -639,11 +653,15 @@ d3.csv('names_without_dupicates.csv')
 
 function createSideNav(march_route_list) {
 
+
     d3.select('.table').selectAll('*').remove();
 
+    d3.select('div.search p.cityName')
+    .text("Обране місто: " + march_route_list.key);
+
     var cityNames = d3.select('div.table').append('div')
-        .text(march_route_list.key)
-        .attr('class', 'cityTitle');
+        // .text(march_route_list.key)
+        // .attr('class', 'cityTitle');
 //
 
     var routes = d3.select('div.table').selectAll('div')

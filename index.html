@@ -4,13 +4,28 @@
     <title>Bus Transit</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
+
+
     <link rel="stylesheet" href="css/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+
+    <script src="lib/pixi.js"></script>
+    <script src="lib/L.PixiOverlay.js"></script>
+
+    <!--mapbox-leaflet gl-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.css" rel='stylesheet' />
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
+    <script src="lib/leaflet-mapbox-gl.js"></script>
+
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="example.min.js"></script>
+    <!--<script src="example.min.js"></script>-->
     <script src="lib/rbush.js"></script>
     <script src="lib/turf.min.js"></script>
     <script src="lib/jquery-3.3.1.js"></script>
     <script src="lib/typeahead.js"></script>
+
+
 
     <link rel="stylesheet" href="css/style.css">
     <!--<link rel="stylesheet" href="css/typeahead.css">-->
@@ -19,11 +34,22 @@
 </head>
 <body>
 <main>
-    <figure>
-        <div id="map"></div>
-    </figure>
+    <div id="left">
+        <div id="header-map">
+            <header>
+                <h3>Наступна зупинка</h3>
+                <!--<p>Автобусні маршрути в Україні</p>-->
+            </header>
+            <figure id="map">
+                <!--<div id="map"></div>-->
+            </figure>
+        </div>
+
+    </div>
+
     <div class="navigation">
         <div class="search">
+            <p class="cityName"></p>
             <div id="bloodhound">
                 <input class="typeahead" type="text" placeholder="Оберіть місто">
             </div>
@@ -32,6 +58,48 @@
 
     </div>
 </main>
+<div id="text">
+    <h3>yfysyh</h3>
+    <p>yahahyagdsgsadgsadhadhsh
+    hsdhsdhsdhsdhs
+    sdhsdhsdhsdhshs
+    shshsdhsdhsdh
+
+    sdhsdhsh
+    sdhsdhs</p>
+    <p>yahahyagdsgsadgsadhadhsh
+        hsdhsdhsdhsdhs
+        sdhsdhsdhsdhshs
+        shshsdhsdhsdh
+
+        sdhsdhsh
+        sdhsdhs</p>
+
+    <p>yahahyagdsgsadgsadhadhsh
+        hsdhsdhsdhsdhs
+        sdhsdhsdhsdhshs
+        shshsdhsdhsdh
+
+        sdhsdhsh
+        sdhsdhs</p>
+
+    <p>yahahyagdsgsadgsadhadhsh
+        hsdhsdhsdhsdhs
+        sdhsdhsdhsdhshs
+        shshsdhsdhsdh
+
+        sdhsdhsh
+        sdhsdhs</p>
+
+    <p>yahahyagdsgsadgsadhadhsh
+        hsdhsdhsdhsdhs
+        sdhsdhsdhsdhshs
+        shshsdhsdhsdh
+
+        sdhsdhsh
+        sdhsdhs</p>
+</div>
+
 <script src="js/app.js"></script>
 </body>
 </html>
