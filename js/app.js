@@ -9,7 +9,7 @@
 // var topOff = $t.offset().top;
 // $(window).scrollTop(topOff);
 
-d3.csv('names_without_dupicates.csv')
+d3.csv('names_full.csv')
     .then(function (names) {
         d3.csv('coords_new.csv')
             .then(function (coords) {
@@ -63,6 +63,12 @@ d3.csv('names_without_dupicates.csv')
                             'route_operator': name.route_operator,
                             'id': name.id,
                             'company_id': name.company_id,
+                            'bus_age': name.bus_age,
+                            'bus_comfort_level': name.bus_comfort_level,
+                            'drives_per_day': name.drives_per_day,
+                            'license_data': name.license_data,
+                            'number_of_buses': name.number_of_buses,
+                            'route_regularity': name.route_regularity,
                             'coords': [[+nested_data['$' + name.first.trim()][0].Lat, +nested_data['$' + name.first.trim()][0].Long], [+nested_data['$' + name.second.trim()][0].Lat, +nested_data['$' + name.second.trim()][0].Long]]
                         }
                     }
@@ -112,7 +118,7 @@ d3.csv('names_without_dupicates.csv')
                     });
 
 
-                var map = L.map('map').setView([49.272021, 31.437523], 6);
+                var map = L.map('map', { zoomControl:false }).setView([49.272021, 31.437523], 6);
 
 
                 $('#map').css('position', 'sticky');
@@ -551,7 +557,7 @@ d3.csv('names_without_dupicates.csv')
                             function operatorEvent() {
                                 d3.selectAll('.routeProperty').on('click', function () {
 
-                                    if (!nested_operators['$id_' + this.id]) {alert('not working')}
+                                    // if (!nested_operators['$id_' + this.id]) {alert('not working')}
 
                                     selected = {name:'selectedOperator', feature: nested_operators['$id_' + this.id]};
 
@@ -682,21 +688,27 @@ function createSideNav(march_route_list) {
         .html(function (d) {
             return `
 					<p class="routeTitle">${d.first} - ${d.second}</p>
-					<p data="${ d.id }" id="${ d.company_id }" class="routeProperty">${ d.route_operator || ''}</p>
+					<p data="${ d.id }" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.route_operator || 'Перевізник: немає даних'}</p>
+					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
+					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>
+					<p class="routeProperty">${ 'Клас комфортності автобусів: ' + d.bus_comfort_level || 'Клас комфортності автобусів: немає даних'}</p>
+					<p class="routeProperty">${ 'Частота: ' + d.route_regularity || 'Частота: немає даних'}</p>
 					`
         });
 
 
+
+
 }
 
-
-
-d3.xml("img/hexmap.svg", {crossOrigin: "anonymous"}).then(function(xml) {
-    var navMap = d3.select("#meta-navigation").node().appendChild(xml.documentElement);
-
-    navMap.on('click', function (d) {
-        alert('g')
-    });
-
-});
-
+//
+//
+// d3.xml("img/hexmap.svg", {crossOrigin: "anonymous"}).then(function(xml) {
+//     var navMap = d3.select("#meta-navigation").node().appendChild(xml.documentElement);
+//
+//     navMap.on('click', function (d) {
+//         alert('g')
+//     });
+//
+// });
+//
