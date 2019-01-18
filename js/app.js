@@ -321,7 +321,7 @@ d3.csv('names_full.csv')
                     var selectedMarchRoute;
                     var selectedOperator;
 
-                    var selected =  {name:'selectedCity', feature: nested_names['$Львів'][0].values};
+                    var selected =  {name:'selectedCity', feature: nested_names['$Умань'][0].values};
 
 
 
@@ -588,6 +588,7 @@ d3.csv('names_full.csv')
 
                                     window.scrollTo(0, 0);
 
+
                                     var number = $(this).siblings('.routeProperty')[0].attributes.data;
                                     var res = march_route_list.values.filter(d => {return d.id == number.textContent})[0];
 
@@ -688,7 +689,7 @@ function createSideNav(march_route_list) {
         .html(function (d) {
             return `
 					<p class="routeTitle">${d.first} - ${d.second}</p>
-					<p data="${ d.id }" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.route_operator || 'Перевізник: немає даних'}</p>
+					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="text-decoration: underline wavy #ea3e13" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.route_operator || 'Перевізник: немає даних'}</p>
 					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
 					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>
 					<p class="routeProperty">${ 'Клас комфортності автобусів: ' + d.bus_comfort_level || 'Клас комфортності автобусів: немає даних'}</p>
