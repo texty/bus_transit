@@ -20,7 +20,7 @@ main {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr; }
   main header {
-    margin: 10px; }
+    margin: 10px auto; }
   main figure {
     padding: 0;
     margin: 0; }
