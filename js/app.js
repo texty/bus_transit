@@ -1,21 +1,129 @@
-/**
- * Created by ptrbdr on 11.01.19.
- */
-
-
-// find the selected city in the list and scrolls to it's location,
-// can use it to construct city search
-// var $t = $(d3.select("#Львів" + " .cityTitle").node());
-// var topOff = $t.offset().top;
-// $(window).scrollTop(topOff);
-
-d3.csv('names_full.csv')
-    .then(function (names) {
-        d3.csv('coords_new.csv')
+d3.csv('data/final_data_full_2.csv')
+    .then(function (basic) {
+        d3.csv('data/final_coords_full_2.csv')
             .then(function (coords) {
 
+                var names = basic.filter(function(d) {return d.regulative_institution == "Укртрансбезпека "});
+
+                var oblast_map = {
+                    "ВЛ": {'name':'Волинська область', 'city': 'Луцьк', 'status': true},
+                    "ІФ": {'name':"Івано-Франківська область", 'city': 'Івано-Франківськ', 'status': true},
+                    "ХМ": {'name':"Хмельницька область", 'city': 'Хмельницький', 'status': false},
+                    "ЗК": {'name':"Закарпатська область", 'city': 'Ужгород', 'status': false},
+                    "КВ": {'name':"Київська область", 'city': 'Київ', 'status': false},
+                    "РВ": {'name':"Рівненська область", 'city': 'Рівне', 'status': true},
+                    "ЛВ": {'name':"Львівська область", 'city': 'Львів', 'status': false},
+                    "ТР": {'name':"Тернопільська область", 'city': 'Тернопіль', 'status': false},
+                    "СМ": {'name':"Сумська область", 'city': 'Суми', 'status': true},
+                    "ЧГ": {'name':"Чернігівська область", 'city': 'Чернігів', 'status': true},
+                    "ДН": {'name':"Дніпропетровська область", 'city': 'Дніпропетровськ', 'status': false},
+                    "ДО": {'name':"Донецька область", 'city': 'Краматорськ', 'status': true},
+                    "ЗП": {'name':"Запорізька область", 'city': 'Запоріжжя', 'status': true},
+                    "ХР": {'name':"Херсонська область", 'city': 'Херсон', 'status': true},
+                    "ОД": {'name':"Одеська область", 'city': 'Одеса', 'status': true},
+                    "ЧН": {'name':"Чернівецька область", 'city': 'Чернівці', 'status': false},
+                    "КР": {'name':"Автономна республіка Крим", 'city': 'Севастополь', 'status': false},
+                    "ЖТ": {'name':"Житомирська область", 'city': 'Житомир', 'status': true},
+                    "ПЛ": {'name':"Полтавська область", 'city': 'Полтава', 'status': true},
+                    "ХК": {'name':"Харківська область", 'city': 'Харків', 'status': false},
+                    "ЛГ": {'name':"Луганська область", 'city': 'Сєвєродонецьк', 'status': true},
+                    "ЧК": {'name':"Черкаська область", 'city': 'Черкаси', 'status': true},
+                    "КГ": {'name':"Кіровоградська область", 'city': 'Кіровоград', 'status': true},
+                    "МК": {'name':"Миколаївська область", 'city': 'Миколаїв', 'status': true},
+                    "ВН": {'name':"Вінницька область", 'city': 'Вінниця', 'status': false}
+                };
+
+                d3.xml("img/hexmap.svg", {crossOrigin: "anonymous"}).then(function(xml) {
+                    var navMap = d3.select("#meta-navigation").node().appendChild(xml.documentElement);
+
+                    $('#Layer_1 text').on('click', d => {
+
+                        var selected_oblast = oblast_map[d.currentTarget.innerHTML];
+                        if (selected_oblast.status == false) {return false}
+
+                        names = basic.filter(function(d) {return d.regulative_institution == selected_oblast.name});
+                        result = names.map(function (name) {
+                            if (nested_data['$' + name.first.trim()] != undefined && nested_data['$' + name.second.trim()] != undefined) {
+                                return {
+                                    'departure': name.first,
+                                    'arrival': name.second,
+                                    'marchRoute': name.first + " - " + name.second,
+                                    'route_operator': name.route_operator,
+                                    'id': name.id,
+                                    'company_id': name.company_id,
+                                    'bus_age': name.bus_age,
+                                    'bus_comfort_level': name.bus_comfort_level,
+                                    'drives_per_day': name.drives_per_day,
+                                    'license_data': name.license_data,
+                                    'number_of_buses': name.number_of_buses,
+                                    'route_regularity': name.route_regularity,
+                                    'coords': [[+nested_data['$' + name.first.trim()][0].Lat, +nested_data['$' + name.first.trim()][0].Long], [+nested_data['$' + name.second.trim()][0].Lat, +nested_data['$' + name.second.trim()][0].Long]],
+                                    'regiregulative_institution': name.regulative_institution
+                                }
+                            }
+                            else {
+                                return 'no'
+                            }
+
+                        });
+
+                        lineCoord = result.filter(function (d) {
+                            return d != 'no'
+                        });
+                        tree = rbush();
+
+                        map.removeLayer(markers);
+
+                        // потрібно ще додати фільтр на ту область
+                        geojson = lineCoord.map(function (d) {
+                            return {
+                                type: "Feature",
+                                properties: d,
+                                geometry: {
+                                    type: "Point",
+                                    coordinates: [+d.coords[0][0], +d.coords[0][1]]
+                                }
+                            }
+                        });
+
+                        var geojsonMarkerOptions = {
+                            radius: 4,
+                            fillColor: "#808080",
+                            color: "#000",
+                            weight: 0,
+                            opacity: 1,
+                            fillOpacity: 0.8,
+                            bubblingMouseEvents: false
+                        };
+                        var tree = rbush();
+
+                        //created leaflet markers
+                        markers = L.geoJSON(geojson, {
+                            pointToLayer: function (feature, latlng) {
+
+                                try {
+                                    L.circleMarker(latlng, geojsonMarkerOptions)
+                                }
+                                catch (err) {
+                                    console.log('gg');
+                                }
+
+                            }
+                        }).addTo(map);
+
+                    });
+
+                    $('#Layer_1 text').on('mouseover', d => {
+                        d.target.style.fill = '#ea3e13'
+                    });
+                    $('#Layer_1 text').on('mouseout', d => {
+                        d.target.style.fill = ''
+                    });
+
+                });
+
                 // created geojson out of basic data
-                var geojson = coords.map(function (d) {
+                var geojson = coords.filter(d => d.old_name.split(',')[1] == ' Україна').map(function (d) {
                     return {
                         type: "Feature",
                         properties: d,
@@ -69,7 +177,9 @@ d3.csv('names_full.csv')
                             'license_data': name.license_data,
                             'number_of_buses': name.number_of_buses,
                             'route_regularity': name.route_regularity,
-                            'coords': [[+nested_data['$' + name.first.trim()][0].Lat, +nested_data['$' + name.first.trim()][0].Long], [+nested_data['$' + name.second.trim()][0].Lat, +nested_data['$' + name.second.trim()][0].Long]]
+                            'coords': [[+nested_data['$' + name.first.trim()][0].Lat, +nested_data['$' + name.first.trim()][0].Long], [+nested_data['$' + name.second.trim()][0].Lat, +nested_data['$' + name.second.trim()][0].Long]],
+                            'regiregulative_institution': name.regulative_institution,
+                            'regiregulative_institution': name.coun
                         }
                     }
                     else {
@@ -82,18 +192,18 @@ d3.csv('names_full.csv')
                     return d != 'no'
                 });
 
-                var nested_routes = d3.nest().key(function (d) {
-                    return d.id;
-                }).map(lineCoord);
+                // var nested_routes = d3.nest().key(function (d) {
+                //     return d.id;
+                // }).map(lineCoord);
 
                 const nested_operators = d3.nest().key(function (d) {
                     return 'id_' + d.company_id;
                 }).map(lineCoord);
 
 
-                var operator_names = d3.map(function (d) {
-                    return d.route_operator.trim();
-                }).entries(lineCoord);
+                // var operator_names = d3.map(function (d) {
+                //     return d.route_operator.trim();
+                // }).entries(lineCoord);
                 var city_names = d3.nest().key(function (d) {
                     return d.departure.trim();
                 }).entries(lineCoord)
@@ -123,14 +233,6 @@ d3.csv('names_full.csv')
 
                 $('#map').css('position', 'sticky');
 
-                // var CartoDB_PositronOnlyLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-                //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                //     subdomains: 'abcd',
-                //     maxZoom: 7,
-                //     minZoom: 4
-                // }).addTo(map);
-
-
                 var gl = L.mapboxGL({
                     accessToken: 'pk.eyJ1IjoiZHJpbWFjdXMxODIiLCJhIjoiWGQ5TFJuayJ9.6sQHpjf_UDLXtEsz8MnjXw',
                     maxZoom: 9,
@@ -139,8 +241,6 @@ d3.csv('names_full.csv')
                     // style: 'data/labels.json',
                     // pane: 'tilePane'
                 }).addTo(map);
-
-                // L.control.zoom.position('topright');
 
 
                 var geojsonMarkerOptions = {
@@ -174,9 +274,7 @@ d3.csv('names_full.csv')
                     var firstDraw = true;
                     var prevZoom;
 
-
                     var projectedPolygon;
-
 
                     var polygonLatLngs = [
                         [51.509, -0.08],
@@ -235,12 +333,12 @@ d3.csv('names_full.csv')
                                 }
                             });
 
-                            projectedPolygon = polygonLatLngs.map(function (coords) {
-                                return project(coords);
-                            });
-
-                            projectedCenter = project(circleCenter);
-                            circleRadius = circleRadius / scale;
+                            // projectedPolygon = polygonLatLngs.map(function (coords) {
+                            //     return project(coords);
+                            // });
+                            //
+                            // projectedCenter = project(circleCenter);
+                            // circleRadius = circleRadius / scale;
                         }
                         if (firstDraw || prevZoom !== zoom) {
 
@@ -554,7 +652,8 @@ d3.csv('names_full.csv')
                                 renderer.render(container);
                             }
 
-                            function operatorEvent() {
+                            function operatorEvent() 
+                            {
                                 d3.selectAll('.routeProperty').on('click', function () {
 
                                     // if (!nested_operators['$id_' + this.id]) {alert('not working')}
@@ -564,7 +663,9 @@ d3.csv('names_full.csv')
                                     drawOperators(selected, nested_operators);
                                 });
                             }
+                            
 
+                            
                             function setEventOnList(march_route_list) {
 
                                 d3.selectAll('.routeTitle').on('click', function () {
@@ -689,11 +790,13 @@ function createSideNav(march_route_list) {
         .html(function (d) {
             return `
 					<p class="routeTitle">${d.first} - ${d.second}</p>
-					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="text-decoration: underline wavy #ea3e13" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.route_operator || 'Перевізник: немає даних'}</p>
+					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="text-decoration: underline wavy #ea3e13" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
 					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
 					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>
 					<p class="routeProperty">${ 'Клас комфортності автобусів: ' + d.bus_comfort_level || 'Клас комфортності автобусів: немає даних'}</p>
 					<p class="routeProperty">${ 'Частота: ' + d.route_regularity || 'Частота: немає даних'}</p>
+					<p class="routeProperty">${ 'Кількість ліцензій: ' + d.count || 'Частота: немає даних'}</p>
+
 					`
         });
 
@@ -702,14 +805,4 @@ function createSideNav(march_route_list) {
 
 }
 
-//
-//
-// d3.xml("img/hexmap.svg", {crossOrigin: "anonymous"}).then(function(xml) {
-//     var navMap = d3.select("#meta-navigation").node().appendChild(xml.documentElement);
-//
-//     navMap.on('click', function (d) {
-//         alert('g')
-//     });
-//
-// });
-//
+

@@ -1,94 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 22.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 683.5 645.4" style="enable-background:new 0 0 683.5 645.4;" xml:space="preserve">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 683.5 450.4" height="100%" width="100%">
 <style type="text/css">
-	.st0{fill:#929292;}
-	.st1{fill:#5A5A5A;}
-	.st2{fill:none;}
-	.st3{fill:#FFFFFF;}
-	.st4{font-family:'OpenSans';}
-	.st5{font-size:15px;}
+	.st0{fill:none;stroke:#929292;stroke-width:2;stroke-miterlimit:10;}
+	.st1{fill:#929292;}
+	.st2{font-family:'OpenSans-Semibold';}
+	.st3{font-size:23px;}
+	.st4{fill:#FFFFFF;}
 </style>
-<g id="hexes">
-	<path class="st0" data="1" d="M144.3,239.1V192l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L144.3,239.1z M144.3,239.1"/>
-	<path class="st0" d="M285.1,367.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L285.1,367.5z M285.1,367.5"/>
-	<path class="st0" d="M355.5,367.5v-47.2l34.5-15.7l34.5,15.7v47.2L390,383.2L355.5,367.5z M355.5,367.5"/>
-	<path class="st1" d="M390.7,511.8v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L390.7,511.8z M390.7,511.8"/>
-	<path class="st0" d="M285.1,495.8v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L285.1,495.8z M285.1,495.8"/>
-	<path class="st0" d="M109.1,431.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L109.1,431.6z M109.1,431.6"/>
-	<path class="st0" d="M179.5,431.6v-47.2l34.5-15.7l34.5,15.7v47.2L214,447.4L179.5,431.6z M179.5,431.6"/>
-	<path class="st0" d="M249.9,431.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L249.9,431.6z M249.9,431.6"/>
-	<path class="st0" d="M320.3,431.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L320.3,431.6z M320.3,431.6"/>
-	<path class="st0" d="M390.7,431.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L390.7,431.6z M390.7,431.6"/>
-	<path class="st0" d="M461.2,431.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L461.2,431.6z M461.2,431.6"/>
-	<path class="st0" d="M73.9,367.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L73.9,367.5z M73.9,367.5"/>
-	<path class="st0" d="M144.3,367.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L144.3,367.5z M144.3,367.5"/>
-	<path class="st0" d="M214.7,367.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L214.7,367.5z M214.7,367.5"/>
-	<path class="st0" d="M426,367.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L426,367.5z M426,367.5"/>
-	<polygon class="st0" points="530.9,304.6 496.4,320.3 496.4,367.5 530.9,383.2 565.2,320.2 	"/>
-	<polygon class="st1" points="565.4,320.3 565.2,320.2 530.9,383.2 565.4,367.5 	"/>
-	<path class="st0" d="M109.1,303.3v-47.2l34.5-15.7l34.5,15.7v47.2L143.6,319L109.1,303.3z M109.1,303.3"/>
-	<path class="st0" d="M179.5,303.3v-47.2l34.5-15.7l34.5,15.7v47.2L214,319L179.5,303.3z M179.5,303.3"/>
-	<path class="st0" d="M249.9,303.3v-47.2l34.5-15.7l34.5,15.7v47.2L284.4,319L249.9,303.3z M249.9,303.3"/>
-	<path class="st0" d="M320.3,303.3v-47.2l34.5-15.7l34.5,15.7v47.2L354.8,319L320.3,303.3z M320.3,303.3"/>
-	<path class="st0" d="M390.7,303.3v-47.2l34.5-15.7l34.5,15.7v47.2L425.3,319L390.7,303.3z M390.7,303.3"/>
-	<path class="st0" d="M461.2,303.3v-47.2l34.5-15.7l34.5,15.7v47.2L495.7,319L461.2,303.3z M461.2,303.3"/>
-	<polygon class="st0" points="566.1,240.4 531.6,256.1 531.6,303.3 565.9,318.9 600.1,255.9 	"/>
-	<polygon class="st1" points="600.6,303.3 600.6,256.1 600.1,255.9 565.9,318.9 566.1,319 	"/>
-	<path class="st0" d="M355.5,239.1V192l34.5-15.7l34.5,15.7v47.2L390,254.9L355.5,239.1z M355.5,239.1"/>
-	<path class="st0" d="M426,239.1V192l34.5-15.7L495,192v47.2l-34.5,15.7L426,239.1z M426,239.1"/>
-</g>
-<g id="abbreviations">
-	<rect x="160.2" y="208" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 168.4666 219.3791)" class="st3 st4 st5">ВЛ</text>
-	<rect x="124.3" y="400.5" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 134.6181 411.8792)" class="st3 st4 st5">ІФ</text>
-	<rect x="231.3" y="335.2" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 238.6277 346.5786)" class="st3 st4 st5">ХМ</text>
-	<rect x="89.8" y="335.6" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 99.242 347.0324)" class="st3 st4 st5">ЗК</text>
-	<rect x="335.5" y="272.1" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 344.4945 283.5194)" class="st3 st4 st5">КВ</text>
-	<rect x="196.1" y="272.1" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 205.1458 283.5022)" class="st3 st4 st5">РВ</text>
-	<rect x="124.3" y="272.1" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 132.5526 283.528)" class="st3 st4 st5">ЛВ</text>
-	<rect x="160.2" y="335.9" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 169.9422 347.2593)" class="st3 st4 st5">ТР</text>
-	<rect x="442.6" y="208" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 449.4753 219.3791)" class="st3 st4 st5">СМ</text>
-	<rect x="370.7" y="208" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 380.0424 219.3791)" class="st3 st4 st5">ЧГ</text>
-	<rect x="442.6" y="335" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 450.321 346.3517)" class="st3 st4 st5">ДН</text>
-	<rect x="513" y="335" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 520.4314 346.3517)" class="st3 st4 st5">ДО</text>
-	<rect x="476.4" y="400.5" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 484.9531 411.9113)" class="st3 st4 st5">ЗП</text>
-	<rect x="406.6" y="400.5" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 416.2215 411.9221)" class="st3 st4 st5">ХР</text>
-	<rect x="300.3" y="466" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 307.7714 477.4067)" class="st3 st4 st5">ОД</text>
-	<rect x="194.7" y="400.5" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 202.3661 411.9328)" class="st3 st4 st5">ЧН</text>
-	<rect x="407.4" y="480.7" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 416.6667 492.0882)" class="st3 st4 st5">КР</text>
-	<rect x="265.1" y="272.1" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 273.0478 283.5108)" class="st3 st4 st5">ЖТ</text>
-	<rect x="405.9" y="272.1" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 413.6122 283.4936)" class="st3 st4 st5">ПЛ</text>
-	<rect x="477.8" y="272.1" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 487.2673 283.5366)" class="st3 st4 st5">ХК</text>
-	<rect x="547.3" y="272.1" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 556.4949 283.5452)" class="st3 st4 st5">ЛГ</text>
-	<rect x="300.3" y="336.3" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 308.9359 347.7132)" class="st3 st4 st5">ЧК</text>
-	<rect x="373.2" y="335" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 383.169 346.3517)" class="st3 st4 st5">КГ</text>
-	<rect x="336.9" y="400.5" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 343.9929 411.8899)" class="st3 st4 st5">МК</text>
-	<rect x="265.1" y="400.5" class="st2" width="37.2" height="15.1"/>
-	<text transform="matrix(1 0 0 1 273.1357 411.9006)" class="st3 st4 st5">ВН</text>
-</g>
+	<g transform="translate(-50,-80)">
+<path class="st0" d="M150.3,243.1V196l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L150.3,243.1z"/>
+<path class="st0" d="M288.1,369.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L288.1,369.5z"/>
+<path class="st0" d="M357.5,369.5v-47.2l34.5-15.7l34.5,15.7v47.2L392,385.2L357.5,369.5z"/>
+<path class="st1" d="M392.7,511.8v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L392.7,511.8z"/>
+<path class="st0" d="M289.1,495.8v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L289.1,495.8z"/>
+<path class="st0" d="M116.1,432.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L116.1,432.6z"/>
+<path class="st0" d="M184.5,432.6v-47.2l34.5-15.7l34.5,15.7v47.2L219,448.4L184.5,432.6z"/>
+<path class="st0" d="M253.9,432.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L253.9,432.6z"/>
+<path class="st0" d="M323.3,432.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L323.3,432.6z"/>
+<path class="st0" d="M392.7,432.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L392.7,432.6z"/>
+<path class="st0" d="M462.2,432.6v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L462.2,432.6z"/>
+<path class="st0" d="M80.9,369.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L80.9,369.5z"/>
+<path class="st0" d="M150.3,369.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L150.3,369.5z"/>
+<path class="st0" d="M219.7,369.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L219.7,369.5z"/>
+<path class="st0" d="M427,369.5v-47.2l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L427,369.5z"/>
+<polygon class="st0" points="530.9,306.6 496.4,322.3 496.4,369.5 530.9,385.2 565.2,322.2 "/>
+<polygon class="st1" points="565.4,322.3 565.2,322.2 530.9,385.2 565.4,369.5 "/>
+<path class="st0" d="M116.1,306.3v-47.2l34.5-15.7l34.5,15.7v47.2L150.6,322L116.1,306.3z"/>
+<path class="st0" d="M184.5,306.3v-47.2l34.5-15.7l34.5,15.7v47.2L219,322L184.5,306.3z"/>
+<path class="st0" d="M253.9,306.3v-47.2l34.5-15.7l34.5,15.7v47.2L288.4,322L253.9,306.3z"/>
+<path class="st0" d="M323.3,306.3v-47.2l34.5-15.7l34.5,15.7v47.2L357.8,322L323.3,306.3z"/>
+<path class="st0" d="M392.7,306.3v-47.2l34.5-15.7l34.5,15.7v47.2L427.3,322L392.7,306.3z"/>
+<path class="st0" d="M462.2,306.3v-47.2l34.5-15.7l34.5,15.7v47.2L496.7,322L462.2,306.3z"/>
+<polygon class="st0" points="566.1,243.4 531.6,259.1 531.6,306.3 565.9,321.9 600.1,258.9 "/>
+<polygon class="st1" points="600.6,306.3 600.6,259.1 600.1,258.9 565.9,321.9 566.1,322 "/>
+<path class="st0" d="M357.5,243.1V196l34.5-15.7l34.5,15.7v47.2L392,258.9L357.5,243.1z"/>
+<path class="st0" d="M427,243.1V196l34.5-15.7L496,196v47.2l-34.5,15.7L427,243.1z"/>
+<text transform="matrix(1 0 0 1 167.2137 230.3791)" class="st1 st2 st3">ВЛ</text>
+<text transform="matrix(1 0 0 1 137.2402 419.8792)" class="st1 st2 st3">ІФ</text>
+<text transform="matrix(1 0 0 1 234.5276 355.5786)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 100.4661 356.0324)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 341.1849 293.5194)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 204.1453 293.5022)" class="st1 st2 st3">РВ</text>
+<text transform="matrix(1 0 0 1 132.2997 293.528)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 171.0252 356.2593)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 441.2405 230.3791)" class="st1 st2 st3">СМ</text>
+<text transform="matrix(1 0 0 1 376.3226 230.3791)" class="st1 st2 st3">ЧГ</text>
+<text transform="matrix(1 0 0 1 443.0349 355.3517)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 511.7302 355.3517)" class="st1 st2 st3">ДО</text>
+<text transform="matrix(1 0 0 1 479.0879 419.9113)" class="st1 st2 st3">ЗП</text>
+<text transform="matrix(1 0 0 1 412.659 419.9221)" class="st1 st2 st3">ХР</text>
+<text transform="matrix(1 0 0 1 303.0702 484.4067)" class="st1 st2 st3">ОД</text>
+<text transform="matrix(1 0 0 1 199.2206 419.9328)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 412.8737 499.0882)" class="st4 st2 st3"></text>
+<text transform="matrix(1 0 0 1 268.936 293.5108)" class="st1 st2 st3">ЖТ</text>
+<text transform="matrix(1 0 0 1 407.4779 293.4936)" class="st1 st2 st3">ПЛ</text>
+<text transform="matrix(1 0 0 1 482.3962 293.5366)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 550.6238 293.5452)" class="st1 st2 st3">ЛГ</text>
+<text transform="matrix(1 0 0 1 305.0424 356.7132)" class="st1 st2 st3">ЧК</text>
+<text transform="matrix(1 0 0 1 380.2413 355.3517)" class="st1 st2 st3">КГ</text>
+<text transform="matrix(1 0 0 1 337.6628 419.8899)" class="st1 st2 st3">МК</text>
+<text transform="matrix(1 0 0 1 269.5742 419.9006)" class="st1 st2 st3"></text>
+	</g>
 </svg>
