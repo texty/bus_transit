@@ -7,6 +7,7 @@
 	.st2{font-family:'OpenSans-Semibold';}
 	.st3{font-size:23px;}
 	.st4{fill:#FFFFFF;}
+	.selected{fill:#ea3e13 !important;}
 </style>
 	<g transform="translate(-50,-80)">
 <path class="st0" d="M150.3,243.1V196l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L150.3,243.1z"/>

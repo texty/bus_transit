@@ -116,8 +116,8 @@ var regions = (function(){
 
             $('#Layer_1 text').on('click', d => {
 
-                $('[status]')
-                $(this).css( "background-color", 'lightgray').attr('status', 'true');
+                $('.selected').removeClass( "selected").addClass('st1');
+                $(d.target).removeClass('st1').addClass( "selected");
 
 
                 var selected_oblast = oblast_map[d.currentTarget.innerHTML];

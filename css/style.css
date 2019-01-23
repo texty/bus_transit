@@ -97,7 +97,8 @@ main#country, main#regions {
       main#country div.navigation .table p.routeProperty, main#country div.navigation .table-region p.routeProperty, main#regions div.navigation .table p.routeProperty, main#regions div.navigation .table-region p.routeProperty {
         display: none;
         font-size: 0.9em;
-        color: grey; }
+        color: grey;
+        margin-left: 0.4em; }
       main#country div.navigation .table div.cityTitle, main#country div.navigation .table p.routeTitle, main#country div.navigation .table p.routeProperty, main#country div.navigation .table-region div.cityTitle, main#country div.navigation .table-region p.routeTitle, main#country div.navigation .table-region p.routeProperty, main#regions div.navigation .table div.cityTitle, main#regions div.navigation .table p.routeTitle, main#regions div.navigation .table p.routeProperty, main#regions div.navigation .table-region div.cityTitle, main#regions div.navigation .table-region p.routeTitle, main#regions div.navigation .table-region p.routeProperty {
         cursor: pointer; }
       main#country div.navigation .table .cityTitle, main#country div.navigation .table-region .cityTitle, main#regions div.navigation .table .cityTitle, main#regions div.navigation .table-region .cityTitle {
