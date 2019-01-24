@@ -614,6 +614,8 @@ var regions = (function(){
                         var possibleRoutes = findRoute(d.latlng);
                         var result = measureDistance(d.latlng, possibleRoutes);
 
+                        console.log(result);
+
 
                         if (result[0] || result[0].feature.regulative_institution ==  selected_oblast) {
                             console.log('that was correct');

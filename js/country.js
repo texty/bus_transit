@@ -475,7 +475,7 @@ var country = (function(){
 
 
                         renderer.render(container);
-                        map.flyTo([d.sourceTarget.feature.properties.Lat, d.sourceTarget.feature.properties.Long], 6);
+                        // map.flyTo([d.sourceTarget.feature.properties.Lat, d.sourceTarget.feature.properties.Long], 6);
 
                     });
 
@@ -492,7 +492,7 @@ var country = (function(){
                             selected = {name:'selectedMarchRoute', feature:result[0].feature};
                         }
 
-                        map.flyTo([d.latlng.lat, d.latlng.lng], 6);
+                        // map.flyTo([d.latlng.lat, d.latlng.lng], 6);
 
                         $('#' + result[0].feature.company_id).siblings('.routeTitle').click();
 
@@ -635,7 +635,7 @@ var country = (function(){
 
 
                         renderer.render(container);
-                        map.flyTo([selected.feature[0].coords[0][0], selected.feature[0].coords[0][1]], 6);
+                        // map.flyTo([selected.feature[0].coords[0][0], selected.feature[0].coords[0][1]], 6);
 
 
 
