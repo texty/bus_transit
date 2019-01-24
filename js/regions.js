@@ -127,7 +127,6 @@ var regions = (function(){
                 selected = {name:'selectedCity', feature: nested_names['$' + selected_oblast.city][0].values};
 
 
-
                 names = basic.filter(function(d) {return d.regulative_institution == selected_oblast.name});
                 result = names.map(function (name) {
                     if (nested_data['$' + name.first.trim()] != undefined && nested_data['$' + name.second.trim()] != undefined) {
@@ -162,18 +161,30 @@ var regions = (function(){
 
                 map.removeLayer(markers);
 
+                var dataForMarkers = [];
+                lineCoord.forEach(d => {
+                    var a = JSON.parse(JSON.stringify( d ));
+                    var b = JSON.parse(JSON.stringify( d ));
+
+                    a.coords = d.coords[0];
+                    b.coords = d.coords[1];
+
+                    dataForMarkers.push(a);
+                    dataForMarkers.push(b);
+                });
+
                 // потрібно ще додати фільтр на ту область
-                geojson = lineCoord.map(function (d) {
+                geojson = dataForMarkers.map(function (d) {
                     return {
                         type: "Feature",
                         properties: d,
                         geometry: {
                             type: "Point",
-                            coordinates: [+d.coords[0][1], +d.coords[0][0]]
+                            coordinates: [+d.coords[1], +d.coords[0]]
                         }
                     }
                 });
-                console.log(lineCoord);
+
 
 
                 var geojsonMarkerOptions = {
