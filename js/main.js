@@ -1,42 +1,50 @@
-d3.csv('data/final_data_full_3.csv')
+d3.csv('data/final_data_full_5.csv')
     .then(function (basic) {
         d3.csv('data/final_coords_full_3.csv')
             .then(function (coords) {
+                d3.json('data/oblast_geo.geojson')
+                    .then(function (oblast) {
 
-                regions.draw(basic, coords);
-                country.draw(basic, coords);
+                        var oblast_data = oblast.features.map(d => {
+                            return {name:d.properties.LABEL, data:d}
+                        });
 
-                $('main#regions').hide();
+                        var polygon_map = d3.nest().key(function (d) {
+                            return d.name;
+                        }).map(oblast_data);
+                        
+                        regions.draw(basic, coords, polygon_map);
+                        country.draw(basic, coords);
 
-                $('.country-button').css( "background-color", 'lightgray' );
+                        $('main#regions').hide();
+
+                        $('.country-button').css("background-color", 'lightgray');
 
 
-                $('.regions-button').on('click', function () {
-                    $('main#country').hide();
-                    $('main#regions').show();
+                        $('.regions-button').on('click', function () {
+                            $('main#country').hide();
+                            $('main#regions').show();
 
 
-                    $('.country-button').css( "background-color", 'gray' );
-                    $('.regions-button').css( "background-color", 'lightgray');
+                            $('.country-button').css("background-color", 'gray');
+                            $('.regions-button').css("background-color", 'lightgray');
 
-                    d3.selectAll('.st1.st2.st3').nodes().forEach(function (d) {
-                        if (d.innerHTML == 'ЧГ') {
-                            $(d).click()
-                        }
+                            d3.selectAll('.st1.st2.st3').nodes().forEach(function (d) {
+                                if (d.innerHTML == 'ЧГ') {
+                                    $(d).click()
+                                }
+                            });
+
+                        });
+                        $('.country-button').on('click', function () {
+                            $('main#regions').hide();
+                            $('main#country').show();
+
+                            $('.country-button').css("background-color", 'lightgray');
+                            $('.regions-button').css("background-color", 'gray');
+
+
+                        });
                     });
-
-                });
-                $('.country-button').on('click', function () {
-                    $('main#regions').hide();
-                    $('main#country').show();
-
-                    $('.country-button').css( "background-color", 'lightgray' );
-                    $('.regions-button').css( "background-color", 'gray' );
-
-
-
-                });
-
-
             })
     });

@@ -4,9 +4,11 @@ var regions = (function(){
 
     var remakeMap = false;
 
-    module.draw = function(basic, coords) {
+    module.draw = function(basic, coords, polygon_map) {
 
         var oblastMap = 'Чернігівська область';
+
+        //Not working, was trying to check if point within oblast
 
         var names = basic.filter(function(d) {return d.regulative_institution == oblastMap});
 
@@ -21,7 +23,7 @@ var regions = (function(){
 
         var nested_data = d3.nest()
             .key(function (d) {
-                return d.new_name.trim();
+                return d.new_name;
             })
             .map(coords);
 
@@ -67,9 +69,43 @@ var regions = (function(){
 
         });
 
-        var lineCoord = result.filter(function (d) {
-            return d != 'no'
+
+        var lineCoord = [];
+        result.forEach(function (d) {
+
+            if (d != 'no') {
+                var pt1 = {
+                    "type": "Feature",
+                    "properties": {
+                        "marker-color": "#f00"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [d.coords[0][1], d.coords[0][0]]
+                    }
+                };
+
+                var pt2 = {
+                    "type": "Feature",
+                    "properties": {
+                        "marker-color": "#f00"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [d.coords[1][1], d.coords[1][0]]
+                    }
+                };
+
+
+                var first = turf.inside(pt1,polygon_map['$'+d.regulative_institution][0].data);
+                var second = turf.inside(pt2,polygon_map['$'+d.regulative_institution][0].data);
+
+                if (first && second) {
+                    lineCoord.push(d);
+                }
+            }
         });
+        
 
         var selected =  {name:'selectedCity', feature: nested_names['$Чернігів'][0].values};
 
@@ -126,7 +162,7 @@ var regions = (function(){
                 oblastMap = selected_oblast.name;
                 selected = {name:'selectedCity', feature: nested_names['$' + selected_oblast.city][0].values};
 
-
+                
                 names = basic.filter(function(d) {return d.regulative_institution == selected_oblast.name});
                 result = names.map(function (name) {
                     if (nested_data['$' + name.first.trim()] != undefined && nested_data['$' + name.second.trim()] != undefined) {
@@ -154,9 +190,43 @@ var regions = (function(){
 
                 });
 
-                lineCoord = result.filter(function (d) {
-                    return d != 'no'
+                var lineCoord = [];
+                result.forEach(function (d) {
+
+                    if (d != 'no') {
+                        var pt1 = {
+                            "type": "Feature",
+                            "properties": {
+                                "marker-color": "#f00"
+                            },
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [d.coords[0][1], d.coords[0][0]]
+                            }
+                        };
+
+                        var pt2 = {
+                            "type": "Feature",
+                            "properties": {
+                                "marker-color": "#f00"
+                            },
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [d.coords[1][1], d.coords[1][0]]
+                            }
+                        };
+
+
+                        var first = turf.inside(pt1,polygon_map['$'+d.regulative_institution][0].data);
+                        var second = turf.inside(pt2,polygon_map['$'+d.regulative_institution][0].data);
+
+                        if (first && second) {
+                            lineCoord.push(d);
+                        }
+                    }
                 });
+
+
                 tree = rbush();
 
                 map.removeLayer(markers);
@@ -260,19 +330,19 @@ var regions = (function(){
 
         $('#map').css('position', 'sticky');
 
-        var gl = L.mapboxGL({
-            accessToken: 'pk.eyJ1IjoiZHJpbWFjdXMxODIiLCJhIjoiWGQ5TFJuayJ9.6sQHpjf_UDLXtEsz8MnjXw',
-            maxZoom: 9,
-            minZoom: 6,
-            style: 'klokantech-basic.json'
-            // style: 'data/labels.json',
-            // pane: 'tilePane'
-        }).addTo(map);
-        //
-        // var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //     maxZoom: 19,
-        //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        // var gl = L.mapboxGL({
+        //     accessToken: 'pk.eyJ1IjoiZHJpbWFjdXMxODIiLCJhIjoiWGQ5TFJuayJ9.6sQHpjf_UDLXtEsz8MnjXw',
+        //     maxZoom: 9,
+        //     minZoom: 6,
+        //     style: 'klokantech-basic.json'
+        //     // style: 'data/labels.json',
+        //     // pane: 'tilePane'
         // }).addTo(map);
+        //
+        var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
 
 
         var geojsonMarkerOptions = {
@@ -849,7 +919,7 @@ var regions = (function(){
                 })
                 .html(function (d) {
                     return `
-					<p class="routeTitle">${d.first} - ${d.second}</p>
+					<p class="routeTitle">${d.first} - ${d.second} ${d.id}</p>
 					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #ea3e13" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
 					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
 					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>
