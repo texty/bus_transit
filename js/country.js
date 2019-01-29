@@ -47,11 +47,6 @@ var country = (function(){
             }
         });
 
-        var nested_names = d3.nest()
-            .key(function (d) {
-                return d.first.trim();
-            })
-            .entries(names);
 
         var nested_data = d3.nest()
             .key(function (d) {
@@ -59,17 +54,25 @@ var country = (function(){
             })
             .map(coords);
 
+        names.forEach(function (d, i) {
 
-        nested_names.forEach(function (d, i) {
-            d.values.forEach(function (dd, ii) {
-                if (nested_data['$' + dd.first.trim()] != undefined && nested_data['$' + dd.second.trim()] != undefined) {
-                    nested_names[i].values[ii].coords = [[+nested_data['$' + dd.first.trim()][0].Lat, +nested_data['$' + dd.first.trim()][0].Long], [+nested_data['$' + dd.second.trim()][0].Lat, +nested_data['$' + dd.second.trim()][0].Long]]
+                if (nested_data['$' + d.first.trim()] != undefined && nested_data['$' + d.second.trim()] != undefined) {
+                    names[i].coords = [[+nested_data['$' + d.first.trim()][0].Lat, +nested_data['$' + d.first.trim()][0].Long], [+nested_data['$' + d.second.trim()][0].Lat, +nested_data['$' + d.second.trim()][0].Long]]
                 }
                 else {
-                    nested_names[i].values[ii].coords = 'NO'
+                    names[i].coords = 'NO'
                 }
-            })
         });
+
+        names = names.filter(d => d.coords != 'NO');
+
+        var nested_names = d3.nest()
+            .key(function (d) {
+                return d.first.trim();
+            })
+            .entries(names);
+
+
 
         nested_names = d3.nest().key(function (d) {
             return d.key;
@@ -406,6 +409,7 @@ var country = (function(){
 
                             var march_route_list = nested_names['$' + selectedCity.feature[0].first.trim()][0];
 
+
                             createSideNav(march_route_list);
                         }
 
@@ -479,6 +483,18 @@ var country = (function(){
 
                     });
 
+                    markers.on('mouseover', d => {
+                        d.layer.setStyle({fillColor: "#ea3e13"});
+                        var popup = L.popup()
+                            .setLatLng(d.latlng)
+                            .setContent(d.layer.feature.properties.new_name)
+                            .openOn(map);
+
+                    });
+                    markers.on('mouseout', d => {
+                        d.layer.setStyle({fillColor: "#929292"});
+                    });
+
                     map.on('click', function (d) {
 
                         var possibleRoutes = findRoute(d.latlng);
@@ -494,7 +510,9 @@ var country = (function(){
 
                         // map.flyTo([d.latlng.lat, d.latlng.lng], 6);
 
-                        $('#' + result[0].feature.company_id).siblings('.routeTitle').click();
+                        $("[data=" + result[0].feature.id + "]").siblings('.routeTitle').click();
+
+
 
                     });
 
@@ -584,6 +602,7 @@ var country = (function(){
                         d3.selectAll('.routeTitle').on('click', function () {
 
                             var $t = $($(this).parent().children(1));
+                            $(this).parent().css('margin-left', '0.5em')
 
                             if ($t[0].classList[1]) {
                                 // $('.open').hide('fast');
@@ -597,10 +616,10 @@ var country = (function(){
                                 $t.addClass('open')
                             }
 
-                            // var topOff = $t.offset().top - 150;
-                            // $(window).scrollTop(0);
+                            // var topOff = $t.offset().top;
+                            // $(window).scrollTop(topOff);
 
-                            window.scrollTo(0, 0);
+                            // window.scrollTo(0, 0);
 
 
                             var number = $(this).siblings('.routeProperty')[0].attributes.data;
@@ -675,13 +694,16 @@ var country = (function(){
 
         function createSideNav(march_route_list) {
 
+            march_route_list.values = march_route_list.values
+                .sort((a, b) => a.second.localeCompare(b.second));
+
 
             d3.select('.table').selectAll('*').remove();
 
             d3.select('div.search p.cityName')
                 .text("Обране місто: " + march_route_list.key);
 
-            var cityNames = d3.select('div.table').append('div')
+            var cityNames = d3.select('div.table').append('div');
             // .text(march_route_list.key)
             // .attr('class', 'cityTitle');
 //
@@ -698,7 +720,7 @@ var country = (function(){
                 })
                 .html(function (d) {
                     return `
-					<p class="routeTitle">${d.first} - ${d.second}</p>
+					<p class="routeTitle">${d.second}</p>
 					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #ea3e13" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
 					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
 					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>

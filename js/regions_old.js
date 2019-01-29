@@ -855,8 +855,6 @@ var regions = (function(){
 					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>
 					<p class="routeProperty">${ 'Клас комфортності автобусів: ' + d.bus_comfort_level || 'Клас комфортності автобусів: немає даних'}</p>
 					<p class="routeProperty">${ 'Частота: ' + d.route_regularity || 'Частота: немає даних'}</p>
-					<p class="routeProperty">${ 'Кількість ліцензій: ' + d.count || 'Частота: немає даних'}</p>
-
 					`
                 });
 
