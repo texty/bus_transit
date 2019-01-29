@@ -13,12 +13,6 @@ var regions = (function(){
         var tree = rbush();
 
 
-        var nested_names = d3.nest()
-            .key(function (d) {
-                return d.first.trim();
-            })
-            .entries(basic.filter(function(d) {return d.regulative_institution != 'Україна'}));
-
         var nested_data = d3.nest()
             .key(function (d) {
                 return d.new_name.trim();
@@ -26,16 +20,23 @@ var regions = (function(){
             .map(coords);
 
 
-        nested_names.forEach(function (d, i) {
-            d.values.forEach(function (dd, ii) {
-                if (nested_data['$' + dd.first.trim()] != undefined && nested_data['$' + dd.second.trim()] != undefined) {
-                    nested_names[i].values[ii].coords = [[+nested_data['$' + dd.first.trim()][0].Lat, +nested_data['$' + dd.first.trim()][0].Long], [+nested_data['$' + dd.second.trim()][0].Lat, +nested_data['$' + dd.second.trim()][0].Long]]
-                }
-                else {
-                    nested_names[i].values[ii].coords = 'NO'
-                }
-            })
+        basic.forEach(function (d, i) {
+
+            if (nested_data['$' + d.first.trim()] != undefined && nested_data['$' + d.second.trim()] != undefined) {
+                basic[i].coords = [[+nested_data['$' + d.first.trim()][0].Lat, +nested_data['$' + d.first.trim()][0].Long], [+nested_data['$' + d.second.trim()][0].Lat, +nested_data['$' + d.second.trim()][0].Long]]
+            }
+            else {
+                basic[i].coords = 'NO'
+            }
         });
+
+        basic = basic.filter(d => d.coords != 'NO');
+
+        var nested_names = d3.nest()
+            .key(function (d) {
+                return d.first.trim();
+            })
+            .entries(basic.filter(function(d) {return d.regulative_institution != 'Україна'}));
 
         nested_names = d3.nest().key(function (d) {
             return d.key;
