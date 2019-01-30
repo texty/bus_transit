@@ -164,6 +164,8 @@ var country = (function(){
             bubblingMouseEvents: false
         }).addTo(map);
 
+        map.fitBounds(oblastBoundaries.getBounds());
+
 
         $('#map').css('position', 'sticky');
 
