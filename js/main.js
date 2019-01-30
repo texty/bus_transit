@@ -3,22 +3,22 @@ d3.csv('data/final_data_full_5.csv')
         d3.csv('data/final_coords_full_3.csv')
             .then(function (coords) {
                 d3.json('data/oblast_geo.geojson')
-                    .then(function (oblast) {
+                    .then(function (oblastData) {
 
-                        var oblast_data = oblast.features.map(d => {
-                            return {name:d.properties.LABEL, data:d}
-                        });
-
-                        var polygon_map = d3.nest().key(function (d) {
-                            return d.name;
-                        }).map(oblast_data);
+                        // var oblast_data = oblast.features.map(d => {
+                        //     return {name:d.properties.LABEL, data:d}
+                        // });
+                        //
+                        // var polygon_map = d3.nest().key(function (d) {
+                        //     return d.name;
+                        // }).map(oblast_data);
                         
-                        regions.draw(basic, coords, polygon_map);
-                        country.draw(basic, coords);
+                        regions.draw(basic, coords, oblastData);
+                        country.draw(basic, coords, oblastData);
 
                         $('main#regions').hide();
 
-                        $('.country-button').css("background-color", 'lightgray');
+                        $('.regions-button').css("background-color", 'lightgray');
 
 
                         $('.regions-button').on('click', function () {
@@ -26,8 +26,9 @@ d3.csv('data/final_data_full_5.csv')
                             $('main#regions').show();
 
 
-                            $('.country-button').css("background-color", 'gray');
-                            $('.regions-button').css("background-color", 'lightgray');
+                            $('.country-button').css("background-color", 'lightgray');
+                            $('.regions-button').css("background-color", 'gray');
+
 
                             d3.selectAll('.st1.st2.st3').nodes().forEach(function (d) {
                                 if (d.innerHTML == 'ЧГ') {
@@ -40,9 +41,8 @@ d3.csv('data/final_data_full_5.csv')
                             $('main#regions').hide();
                             $('main#country').show();
 
-                            $('.country-button').css("background-color", 'lightgray');
-                            $('.regions-button').css("background-color", 'gray');
-
+                            $('.country-button').css("background-color", 'gray');
+                            $('.regions-button').css("background-color", 'lightgray');
 
                         });
                     });

@@ -136,43 +136,43 @@
         airports = airports.filter(function(d) {
             return d3.geoContains(states, [d.longitude, d.latitude]) && d.state !== "NA";
         });
-        console.log("Filtered " + (old - airports.length) + " out of bounds airports.");
-        // function to sort airports by degree
+//        console.log("Filtered " + (old - airports.length) + " out of bounds airports.");
+//        // function to sort airports by degree
         var bydegree = function(a, b) {
             return d3.descending(a.degree, b.degree);
         };
-        // uncomment nest to show airport with highest degree per state
-        // uncomment slice to show top 50 airports by degree
-        // uncomment both to see everything break because there are too many airports
-        // nest airports by state and reduce to maximum degree airport per state
-        // https://github.com/d3/d3-collection#nests
-         airports = d3.nest()
-           .key(function(d) { return d.state; })
-           .rollup(function(leaves) {
-             leaves.sort(bydegree);
-             return leaves[0];
-           })
-           .map(airports)
-           .values();
-        // sort remaining airports by degree
-        airports.sort(bydegree);
-        airports = airports.slice(0, 50);
-        // calculate projected x, y pixel locations
+//        // uncomment nest to show airport with highest degree per state
+//        // uncomment slice to show top 50 airports by degree
+//        // uncomment both to see everything break because there are too many airports
+//        // nest airports by state and reduce to maximum degree airport per state
+//        // https://github.com/d3/d3-collection#nests
+//         airports = d3.nest()
+//           .key(function(d) { return d.state; })
+//           .rollup(function(leaves) {
+//             leaves.sort(bydegree);
+//             return leaves[0];
+//           })
+//           .map(airports)
+//           .values();
+//        // sort remaining airports by degree
+//        airports.sort(bydegree);
+//        airports = airports.slice(0, 50);
+//        // calculate projected x, y pixel locations
         airports.forEach(function(d) {
             var coords = projection([d.longitude, d.latitude]);
             d.x = coords[0];
             d.y = coords[1];
         });
-        // reset map to only contain airports post filter
+//        // reset map to only contain airports post filter
         byiata = d3.map(airports, function(d) { return d.iata; });
-        // filter out flights that do not go between remaining airports
-        old = flights.length;
+//        // filter out flights that do not go between remaining airports
+//        old = flights.length;
         flights = flights.filter(function(d) {
             return byiata.has(d.source.iata) && byiata.has(d.target.iata);
         });
-        console.log("Removed " + (old - flights.length) + " flights.");
-        console.log("Currently " + airports.length + " airports remaining.");
-        console.log("Currently " + flights.length + " flights remaining.");
+//        console.log("Removed " + (old - flights.length) + " flights.");
+//        console.log("Currently " + airports.length + " airports remaining.");
+//        console.log("Currently " + flights.length + " flights remaining.");
         // start drawing everything
         drawData(byiata.values(), flights);
     }
@@ -184,7 +184,7 @@
         var bundle = generateSegments(airports, flights);
         // https://github.com/d3/d3-shape#curveBundle
         var line = d3.line()
-                .curve(d3.curveBundle.beta(0.75))
+                .curve(d3.curveBundle.beta(0.95))
                 .x(function(d) { return d.x; })
                 .y(function(d) { return d.y; });
         var links = plot.append("g").attr("id", "flights")
@@ -198,7 +198,7 @@
                 .style("stroke-width", 0.5)
                 .style("stroke-opacity", 0.2);
         // https://github.com/d3/d3-force
-        var layout = d3.force()
+        var layout = d3.forceSimulation()
         // settle at a layout faster
                 .alphaDecay(0.1)
                 // nearby nodes attract each other

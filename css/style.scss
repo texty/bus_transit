@@ -34,7 +34,7 @@ body {
     button {
       font-size: larger;
       background-color: gray;
-      color: white;
+      color: $bgcol;
       border-radius: 0.5em;
       border: none;
     }
@@ -92,6 +92,11 @@ main#country, main#regions {
 
     margin-top: 1em;
 
+    div.directions_title {
+      margin: 0.5em 0.4em 0 0.8em;
+    }
+
+
     #meta-navigation {
         svg {
           //height: 70%;
@@ -107,11 +112,17 @@ main#country, main#regions {
 
       width: 100%;
       background-color: $bgcol;
-      padding: 0.5em;
+      padding-top: 0.5em;
+      padding-bottom: 0.5em;
 
-      p.cityName, p.cityName-regions {
+      div.cityName, div.cityName-regions {
+        margin: 1em 0.4em 0.5em 0.8em;
+      }
+
+      div#bloodhound {
         margin: 1em 0.4em 0.5em 0.4em;
       }
+
 
       .tt-input, /* UPDATE: newer versions use tt-input instead of tt-query */
       .tt-hint {
@@ -180,7 +191,7 @@ main#country, main#regions {
         display: none;
         font-size: 0.9em;
         color: grey;
-        margin-left: 0.4em;
+        margin-left: 1.5em;
       }
 
       div.cityTitle, p.routeTitle, p.routeProperty {
@@ -200,6 +211,7 @@ main#country, main#regions {
         background-color: $accentcolorange;
         margin-block-start: 0;
         margin-block-end: 0;
+        color: white;
 
       }
 

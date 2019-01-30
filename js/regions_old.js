@@ -4,10 +4,11 @@ var regions = (function(){
 
     var remakeMap = false;
 
-    module.draw = function(basic, coords) {
+    module.draw = function(basic, coords, oblastData) {
+
 
         var oblastMap = 'Чернігівська область';
-
+        //
         var names = basic.filter(function(d) {return d.regulative_institution == oblastMap});
 
         var tree = rbush();
@@ -160,6 +161,19 @@ var regions = (function(){
                 });
                 tree = rbush();
 
+                if (oblastBoundary) {
+                    map.removeLayer(oblastBoundary);
+                }
+                geo = oblastData.features.filter(d => d.properties.LABEL == oblastMap);
+                oblastBoundary = L.geoJSON(geo[0], {
+                    color:"#808080",
+                    fill: "#000",
+                    weight:2,
+                    // stroke-width:1,
+                    fillOpacity: 0,
+                    bubblingMouseEvents: false
+                }).addTo(map);
+
                 map.removeLayer(markers);
 
                 var dataForMarkers = [];
@@ -256,16 +270,28 @@ var regions = (function(){
                 name: 'states',
                 source: states
             });
-        var map = L.map('map-regions', { zoomControl:false }).setView([49.272021, 31.437523], 6);
+        var map = L.map('map-regions')//.setView([49.272021, 31.437523], 6);
+
+        var geo = oblastData.features.filter(d => d.properties.LABEL == oblastMap);
+        var oblastBoundary = L.geoJSON(geo[0], {
+            color:"#808080",
+            fill: "#000",
+            weight:2,
+            // stroke-width:1,
+            fillOpacity: 0,
+            bubblingMouseEvents: false
+        }).addTo(map);
 
 
         $('#map').css('position', 'sticky');
+
+
 
         var gl = L.mapboxGL({
             accessToken: 'pk.eyJ1IjoiZHJpbWFjdXMxODIiLCJhIjoiWGQ5TFJuayJ9.6sQHpjf_UDLXtEsz8MnjXw',
             maxZoom: 9,
             minZoom: 6,
-            style: 'klokantech-basic.json'
+            style: 'regions.json'
             // style: 'data/labels.json',
             // pane: 'tilePane'
         }).addTo(map);
@@ -319,27 +345,27 @@ var regions = (function(){
             var firstDraw = true;
             var prevZoom;
 
-            var projectedPolygon;
-
-            var polygonLatLngs = [
-                [51.509, -0.08],
-                [51.503, -0.06],
-                [51.51, -0.047],
-                [51.509, -0.08]
-            ];
-
-            var circleCenter = [51.508, -0.11];
-            var projectedCenter;
-            var circleRadius = 85;
-
-            var triangle = new PIXI.Graphics();
-            triangle.popup = L.popup()
-                .setLatLng([51.5095, -0.063])
-                .setContent('I am a polygon.');
-            var circle = new PIXI.Graphics();
-            circle.popup = L.popup()
-                .setLatLng(circleCenter)
-                .setContent('I am a circle.');
+            // var projectedPolygon;
+            //
+            // var polygonLatLngs = [
+            //     [51.509, -0.08],
+            //     [51.503, -0.06],
+            //     [51.51, -0.047],
+            //     [51.509, -0.08]
+            // ];
+            //
+            // var circleCenter = [51.508, -0.11];
+            // var projectedCenter;
+            // var circleRadius = 85;
+            //
+            // var triangle = new PIXI.Graphics();
+            // triangle.popup = L.popup()
+            //     .setLatLng([51.5095, -0.063])
+            //     .setContent('I am a polygon.');
+            // var circle = new PIXI.Graphics();
+            // circle.popup = L.popup()
+            //     .setLatLng(circleCenter)
+            //     .setContent('I am a circle.');
 
 
             var pixiContainer = new PIXI.Graphics();
@@ -385,7 +411,10 @@ var regions = (function(){
                     // projectedCenter = project(circleCenter);
                     // circleRadius = circleRadius / scale;
                 }
+
                 if (firstDraw || prevZoom !== zoom || remakeMap == true) {
+
+                    console.log('event draw');
 
                     container.clear();
 
@@ -441,7 +470,7 @@ var regions = (function(){
                 }
 
                 firstDraw = false;
-                remakeMap == false;
+                // remakeMap == false;
                 prevZoom = zoom;
                 renderer.render(container);
 
@@ -734,24 +763,19 @@ var regions = (function(){
 
                         d3.selectAll('.routeTitle').on('click', function () {
 
+                            $('p.routeProperty.open').hide('fast');
+                            $('.open').removeClass('open');
+
+
                             var $t = $($(this).parent().children(1));
+                            $t.addClass('open');
 
-                            if ($t[0].classList[1]) {
-                                // $('.open').hide('fast');
-                                // $t.removeClass('open')
-                                // $t.show("slow");
-                            }
-                            else {
-                                $('.open').hide('fast');
+                            $t.show("slow");
 
-                                $t.show("slow");
-                                $t.addClass('open')
-                            }
+                            // var topOff = $t.offset().top;
+                            // $(window).scrollTop(topOff);
 
-                            // var topOff = $t.offset().top - 150;
-                            // $(window).scrollTop(0);
-
-                            window.scrollTo(0, 0);
+                            // window.scrollTo(0, 0);
 
 
                             var number = $(this).siblings('.routeProperty')[0].attributes.data;
@@ -828,6 +852,10 @@ var regions = (function(){
         function createSideNav(march_route_list) {
 
 
+            march_route_list.values = march_route_list.values
+                .sort((a, b) => a.second.localeCompare(b.second));
+
+
             d3.select('.table-region').selectAll('*').remove();
 
             d3.select('div.search p.cityName-regions')
@@ -837,6 +865,9 @@ var regions = (function(){
             // .text(march_route_list.key)
             // .attr('class', 'cityTitle');
 //
+
+            var occurance = [];
+
 
             var routes = d3.select('div.table-region').selectAll('div')
                 .data(march_route_list.values)
@@ -849,8 +880,26 @@ var regions = (function(){
                     return d.first.trim() + ' - ' + d.second.trim()
                 })
                 .html(function (d) {
+                    var ind = occurance.findIndex(dd => dd.name === d.second);
+
+                    if (ind > 0) {
+                        occurance[ind].count += 1;
+                    }
+                    else {
+                        occurance.push({name:d.second, count:1});
+                        ind = occurance.findIndex(dd => dd.name === d.second);
+                    }
+
+                    var title;
+                    if (occurance[ind].count > 1) {
+                        title = occurance[ind].name + " (" +  occurance[ind].count + ")"
+                    }
+                    else {
+                        title = occurance[ind].name
+                    }
+
                     return `
-					<p class="routeTitle">${d.first} - ${d.second}</p>
+					<p class="routeTitle">${title}</p>
 					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #ea3e13" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
 					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
 					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>

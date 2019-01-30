@@ -2,7 +2,7 @@ var country = (function(){
 
     var module = {};
 
-    module.draw = function(basic, coords) {
+    module.draw = function(basic, coords, oblastData) {
 
         var names = basic.filter(function(d) {return d.regulative_institution == "Україна"});
 
@@ -35,8 +35,17 @@ var country = (function(){
         };
 
 
+
+
+        var cityNamesForCount = basic.map(d => d.first);
+        var aCount = new Map([...new Set(cityNamesForCount)].map(
+            x => [x, cityNamesForCount.filter(y => y === x).length]
+        ));
+
         // created geojson out of basic data
         var geojson = coords.filter(d => d.old_name.split(',')[1] == ' Україна').map(function (d) {
+            d.counts = aCount.get(d.new_name);
+
             return {
                 type: "Feature",
                 properties: d,
@@ -146,6 +155,15 @@ var country = (function(){
 
         var map = L.map('map', { zoomControl:false }).setView([49.272021, 31.437523], 6);
 
+        var oblastBoundaries = L.geoJSON(oblastData, {
+            color:"#808080",
+            fill: "#000",
+            weight:0.5,
+            // stroke-width:1,
+            fillOpacity: 0,
+            bubblingMouseEvents: false
+        }).addTo(map);
+
 
         $('#map').css('position', 'sticky');
 
@@ -153,22 +171,30 @@ var country = (function(){
             accessToken: 'pk.eyJ1IjoiZHJpbWFjdXMxODIiLCJhIjoiWGQ5TFJuayJ9.6sQHpjf_UDLXtEsz8MnjXw',
             maxZoom: 9,
             minZoom: 6,
-            style: 'klokantech-basic.json'
+            style: 'country.json'
             // style: 'data/labels.json',
             // pane: 'tilePane'
         }).addTo(map);
 
 
-        var geojsonMarkerOptions = {
-            radius: 4,
-            fillColor: "#808080",
-            color: "#000",
-            weight: 0,
-            opacity: 1,
-            fillOpacity: 0.8,
-            bubblingMouseEvents: false
-        };
+        // var geojsonMarkerOptions = {
+        //     radius: 4,
+        //     fillColor: "#808080",
+        //     color: "#000",
+        //     weight: 0,
+        //     opacity: 1,
+        //     fillOpacity: 0.8,
+        //     bubblingMouseEvents: false
+        // };
         var tree = rbush();
+
+        var max = d3.max(geojson.map(d => d.properties.counts));
+
+
+        var scale = d3.scaleLog()
+            .domain([1, max]) // input
+            .range([3, 12]); // output
+
 
 
         //created leaflet markers
@@ -176,7 +202,15 @@ var country = (function(){
             pointToLayer: function (feature, latlng) {
 
                 try {
-                    return L.circleMarker(latlng, geojsonMarkerOptions)
+                    return L.circleMarker(latlng, {
+                        radius: scale(feature.properties.counts),
+                        fillColor: "#808080",
+                        color: "#000",
+                        weight: 0,
+                        opacity: 1,
+                        fillOpacity: 0.8,
+                        bubblingMouseEvents: false
+                    })
                 }
                 catch (err) {
                     debugger;
@@ -285,13 +319,24 @@ var country = (function(){
 
 
                         var color = '#7e6f6f';
-                        container.beginFill(0xFF3300);
+                        // container.beginFill(0xFF3300);
                         container.lineStyle((0.5 / scale), color.replace('#', '0x'), 1);
 
+                        // var num = Math.floor(Math.random()*2); // this will get a number between 1 and 99;
+                        // num *= Math.floor(Math.random()/2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
+                        //
+                        //
+                        // var midPoint = turf.midpoint(turf.point(d.coords[0]), turf.point(d.coords[1])).geometry.coordinates;
+                        // midPoint = [midPoint[0]-num, midPoint[1]-num]
 
                         // draw a shape
                         container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
+
+                        // container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
                         container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+
+
+
                         container.endFill();
 
                         bounds = L.bounds(L.bounds(d.coords));
@@ -600,21 +645,15 @@ var country = (function(){
                     function setEventOnList(march_route_list) {
 
                         d3.selectAll('.routeTitle').on('click', function () {
+                            
+                            $('p.routeProperty.open').hide('fast');
+                            $('.open').removeClass('open');
+
 
                             var $t = $($(this).parent().children(1));
-                            $(this).parent().css('margin-left', '0.5em')
+                            $t.addClass('open');
 
-                            if ($t[0].classList[1]) {
-                                // $('.open').hide('fast');
-                                // $t.removeClass('open')
-                                // $t.show("slow");
-                            }
-                            else {
-                                $('.open').hide('fast');
-
-                                $t.show("slow");
-                                $t.addClass('open')
-                            }
+                            $t.show("slow");
 
                             // var topOff = $t.offset().top;
                             // $(window).scrollTop(topOff);
@@ -700,13 +739,15 @@ var country = (function(){
 
             d3.select('.table').selectAll('*').remove();
 
-            d3.select('div.search p.cityName')
-                .text("Обране місто: " + march_route_list.key);
+            d3.select('div.search .cityName b')
+                .text( march_route_list.key );
 
             var cityNames = d3.select('div.table').append('div');
             // .text(march_route_list.key)
             // .attr('class', 'cityTitle');
-//
+
+
+            var occurance = [];
 
             var routes = d3.select('div.table').selectAll('div')
                 .data(march_route_list.values)
@@ -719,15 +760,32 @@ var country = (function(){
                     return d.first.trim() + ' - ' + d.second.trim()
                 })
                 .html(function (d) {
+
+                    var ind = occurance.findIndex(dd => dd.name === d.second);
+
+                    if (ind > 0) {
+                        occurance[ind].count += 1;
+                    }
+                    else {
+                        occurance.push({name:d.second, count:1});
+                        ind = occurance.findIndex(dd => dd.name === d.second);
+                    }
+
+                    var title;
+                    if (occurance[ind].count > 1) {
+                        title = occurance[ind].name + " (" +  occurance[ind].count + ")"
+                    }
+                    else {
+                        title = occurance[ind].name
+                    }
+
                     return `
-					<p class="routeTitle">${d.second}</p>
+					<p class="routeTitle">${title}</p>
 					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #ea3e13" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
 					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
 					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>
 					<p class="routeProperty">${ 'Клас комфортності автобусів: ' + d.bus_comfort_level || 'Клас комфортності автобусів: немає даних'}</p>
 					<p class="routeProperty">${ 'Частота: ' + d.route_regularity || 'Частота: немає даних'}</p>
-					<p class="routeProperty">${ 'Кількість ліцензій: ' + d.count || 'Частота: немає даних'}</p>
-
 					`
                 });
 

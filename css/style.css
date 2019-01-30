@@ -15,7 +15,7 @@ body {
     body div.buttons button {
       font-size: larger;
       background-color: gray;
-      color: white;
+      color: #f1f1f1;
       border-radius: 0.5em;
       border: none; }
 
@@ -42,13 +42,18 @@ main#country, main#regions {
     margin: 0; }
   main#country div.navigation, main#regions div.navigation {
     margin-top: 1em; }
+    main#country div.navigation div.directions_title, main#regions div.navigation div.directions_title {
+      margin: 0.5em 0.4em 0 0.8em; }
     main#country div.navigation #meta-navigation svg #Layer_1 path, main#country div.navigation #meta-navigation svg text, main#regions div.navigation #meta-navigation svg #Layer_1 path, main#regions div.navigation #meta-navigation svg text {
       cursor: pointer; }
     main#country div.navigation div.search, main#regions div.navigation div.search {
       width: 100%;
       background-color: #f1f1f1;
-      padding: 0.5em; }
-      main#country div.navigation div.search p.cityName, main#country div.navigation div.search p.cityName-regions, main#regions div.navigation div.search p.cityName, main#regions div.navigation div.search p.cityName-regions {
+      padding-top: 0.5em;
+      padding-bottom: 0.5em; }
+      main#country div.navigation div.search div.cityName, main#country div.navigation div.search div.cityName-regions, main#regions div.navigation div.search div.cityName, main#regions div.navigation div.search div.cityName-regions {
+        margin: 1em 0.4em 0.5em 0.8em; }
+      main#country div.navigation div.search div#bloodhound, main#regions div.navigation div.search div#bloodhound {
         margin: 1em 0.4em 0.5em 0.4em; }
       main#country div.navigation div.search .tt-input,
       main#country div.navigation div.search .tt-hint, main#regions div.navigation div.search .tt-input,
@@ -98,7 +103,7 @@ main#country, main#regions {
         display: none;
         font-size: 0.9em;
         color: grey;
-        margin-left: 0.4em; }
+        margin-left: 1.5em; }
       main#country div.navigation .table div.cityTitle, main#country div.navigation .table p.routeTitle, main#country div.navigation .table p.routeProperty, main#country div.navigation .table-region div.cityTitle, main#country div.navigation .table-region p.routeTitle, main#country div.navigation .table-region p.routeProperty, main#regions div.navigation .table div.cityTitle, main#regions div.navigation .table p.routeTitle, main#regions div.navigation .table p.routeProperty, main#regions div.navigation .table-region div.cityTitle, main#regions div.navigation .table-region p.routeTitle, main#regions div.navigation .table-region p.routeProperty {
         cursor: pointer; }
       main#country div.navigation .table .cityTitle, main#country div.navigation .table-region .cityTitle, main#regions div.navigation .table .cityTitle, main#regions div.navigation .table-region .cityTitle {
@@ -108,7 +113,8 @@ main#country, main#regions {
       main#country div.navigation .table p.routeTitle.open, main#country div.navigation .table-region p.routeTitle.open, main#regions div.navigation .table p.routeTitle.open, main#regions div.navigation .table-region p.routeTitle.open {
         background-color: #ea3e13;
         margin-block-start: 0;
-        margin-block-end: 0; }
+        margin-block-end: 0;
+        color: white; }
       main#country div.navigation .table p.routeTitle, main#country div.navigation .table-region p.routeTitle, main#regions div.navigation .table p.routeTitle, main#regions div.navigation .table-region p.routeTitle {
         margin-block-start: 0.5em;
         margin-block-end: 0.5em;
