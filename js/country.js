@@ -320,18 +320,18 @@ var country = (function(){
 
                         var color = '#7e6f6f';
                         // container.beginFill(0xFF3300);
-                        container.lineStyle((0.5 / scale), color.replace('#', '0x'), 1);
+                        container.lineStyle((0.5 / scale), color.replace('#', '0x'), 0.5);
 
                         // var num = Math.floor(Math.random()*2); // this will get a number between 1 and 99;
                         // num *= Math.floor(Math.random()/2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
                         //
                         //
                         // var midPoint = turf.midpoint(turf.point(d.coords[0]), turf.point(d.coords[1])).geometry.coordinates;
-                        // midPoint = [midPoint[0]-num, midPoint[1]-num]
-
-                        // draw a shape
+                        // midPoint = [midPoint[0]-num, midPoint[1]-num];
+                        //
+                        // // draw a shape
                         container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
-
+                        //
                         // container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
                         container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
 
