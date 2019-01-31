@@ -55,7 +55,7 @@ main#country, main#regions {
   display: grid;
   grid-template-columns: 5fr 2fr;
 
-  @media #{$xlarge}, #{$large} {
+  @media #{$xlarge} {
       display: grid;
       grid-template-columns: 5fr 1fr;
   }
