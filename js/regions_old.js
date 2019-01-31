@@ -240,7 +240,7 @@ var regions = (function(){
                             color: "#000",
                             weight: 0,
                             opacity: 1,
-                            fillOpacity: 0.5,
+                            fillOpacity: 0.2,
                             bubblingMouseEvents: false
                         })
 
@@ -359,12 +359,11 @@ var regions = (function(){
                         color: "#000",
                         weight: 0,
                         opacity: 1,
-                        fillOpacity: 0.5,
+                        fillOpacity: 0.2,
                         bubblingMouseEvents: false
                     })
                 }
                 catch (err) {
-                    debugger;
                 }
 
             }
@@ -590,7 +589,7 @@ var regions = (function(){
 
 
                                     // container.beginFill(0xFF3300);
-                                    container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 0.5);
+                                    container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 1);
 
                                     var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
                                     var num = Math.random(0,10); // this will get a number between 1 and 99;
@@ -652,7 +651,7 @@ var regions = (function(){
 
                                 if (d.coords != 'NO') {
 
-                                    container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 0.5);
+                                    container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 1);
 
                                     var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
                                     var num = Math.random(0,10); // this will get a number between 1 and 99;
@@ -795,7 +794,7 @@ var regions = (function(){
                         // selectedRouteColor = '#B1EA00';
 
                         // container.beginFill(0xFF3300);
-                        container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 0.5);
+                        container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 1);
 
                         var distance = turf.distance(turf.point(current.feature.coords[0]), turf.point(current.feature.coords[1]));
                         var num = Math.random(0,10); // this will get a number between 1 and 99;
@@ -975,11 +974,11 @@ var regions = (function(){
 
                     return `
 					<p class="routeTitle">${title}</p>
-					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #eb00ff" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
-					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
-					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>
-					<p class="routeProperty">${ 'Клас комфортності автобусів: ' + d.bus_comfort_level || 'Клас комфортності автобусів: немає даних'}</p>
-					<p class="routeProperty">${ 'Частота: ' + d.route_regularity || 'Частота: немає даних'}</p>
+					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #EB00FF" id="${ d.company_id }" class="routeProperty">${ d.company_name.length > 5 ? 'Перевізник: ' + d.company_name  : 'Перевізник: немає даних' }</p>
+					<p class="routeProperty">${ d.license_data.length > 3 ? 'Тривалість ліцензії: ' + d.license_data : 'Тривалість ліцензії: немає даних'}</p>
+					<p class="routeProperty">${ d.bus_age.length > 3 ? 'Найстарший автобус на маршруті: ' + d.bus_age : 'Найстарший автобус на маршруті: немає даних'}</p>
+					<p class="routeProperty">${ d.bus_comfort_level.length > 3 ? 'Клас комфортності автобусів: ' + d.bus_comfort_level : 'Клас комфортності автобусів: немає даних'}</p>
+					<p class="routeProperty">${ d.route_regularity.length > 3 ? 'Частота: ' + d.route_regularity : 'Частота: немає даних'}</p>
 					`
                 });
 

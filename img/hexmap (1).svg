@@ -6,7 +6,7 @@
 	.st0{fill:none;stroke:#929292;stroke-width:2;stroke-miterlimit:10;}
 	.st1{fill:#929292;}
 	.st2{font-family:'OpenSans-Semibold';}
-	.st3{font-size:2em;}
+	.st3{font-size:2.5em;}
 	.st4{fill:#FFFFFF;}
 	.selected{fill:#eb00ff !important; font-weight: bold;}
 
