@@ -29,8 +29,7 @@ main#country, main#regions {
       grid-template-columns: 5fr 1fr; } }
   @media screen and (max-width: 577px) {
     main#country, main#regions {
-      display: grid;
-      grid-template-columns: 2fr 2fr; } }
+      display: block; } }
   main#country div#header-map, main#country div#header-map-regions, main#regions div#header-map, main#regions div#header-map-regions {
     height: 100vh;
     position: sticky;
@@ -297,8 +296,10 @@ section#partners {
   background-color: #ffff;
   grid-column: 1/3;
   display: grid;
-  grid-template-columns: auto 220px 80px 190px 220px 120px 220px auto;
-  /*grid-template-columns: auto auto auto auto auto auto auto auto;*/ }
+  grid-template-columns: auto 220px 80px 190px 220px 120px 220px auto; }
+  @media screen and (max-width: 577px) {
+    section#partners {
+      grid-template-columns: auto auto auto auto auto auto auto auto; } }
   section#partners div.partner {
     width: 100%;
     height: 30px; }
