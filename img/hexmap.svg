@@ -7,7 +7,7 @@
 	.st2{font-family:'OpenSans-Semibold';}
 	.st3{font-size:23px;}
 	.st4{fill:#FFFFFF;}
-	.selected{fill:#ea3e13 !important;}
+	.selected{fill:#eb00ff !important; font-weight: bold; font-size: 2em;}
 </style>
 	<g transform="translate(-50,-80)">
 <path class="st0" d="M150.3,243.1V196l34.5-15.7l34.5,15.7v47.2l-34.5,15.7L150.3,243.1z"/>
@@ -39,28 +39,28 @@
 <path class="st0" d="M427,243.1V196l34.5-15.7L496,196v47.2l-34.5,15.7L427,243.1z"/>
 <text transform="matrix(1 0 0 1 167.2137 230.3791)" class="st1 st2 st3">ВЛ</text>
 <text transform="matrix(1 0 0 1 137.2402 419.8792)" class="st1 st2 st3">ІФ</text>
-<text transform="matrix(1 0 0 1 234.5276 355.5786)" class="st1 st2 st3"></text>
-<text transform="matrix(1 0 0 1 100.4661 356.0324)" class="st1 st2 st3"></text>
-<text transform="matrix(1 0 0 1 341.1849 293.5194)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 234.5276 355.5786)" class="st1 st2 st3">—</text>
+<text transform="matrix(1 0 0 1 100.4661 356.0324)" class="st1 st2 st3">—</text>
+<text transform="matrix(1 0 0 1 341.1849 293.5194)" class="st1 st2 st3">—</text>
 <text transform="matrix(1 0 0 1 204.1453 293.5022)" class="st1 st2 st3">РВ</text>
-<text transform="matrix(1 0 0 1 132.2997 293.528)" class="st1 st2 st3"></text>
-<text transform="matrix(1 0 0 1 171.0252 356.2593)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 132.2997 293.528)" class="st1 st2 st3">—</text>
+<text transform="matrix(1 0 0 1 171.0252 356.2593)" class="st1 st2 st3">—</text>
 <text transform="matrix(1 0 0 1 441.2405 230.3791)" class="st1 st2 st3">СМ</text>
 <text transform="matrix(1 0 0 1 376.3226 230.3791)" class="st1 st2 st3">ЧГ</text>
-<text transform="matrix(1 0 0 1 443.0349 355.3517)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 443.0349 355.3517)" class="st1 st2 st3">—</text>
 <text transform="matrix(1 0 0 1 511.7302 355.3517)" class="st1 st2 st3">ДО</text>
 <text transform="matrix(1 0 0 1 479.0879 419.9113)" class="st1 st2 st3">ЗП</text>
 <text transform="matrix(1 0 0 1 412.659 419.9221)" class="st1 st2 st3">ХР</text>
 <text transform="matrix(1 0 0 1 303.0702 484.4067)" class="st1 st2 st3">ОД</text>
-<text transform="matrix(1 0 0 1 199.2206 419.9328)" class="st1 st2 st3"></text>
-<text transform="matrix(1 0 0 1 412.8737 499.0882)" class="st4 st2 st3"></text>
+<text transform="matrix(1 0 0 1 199.2206 419.9328)" class="st1 st2 st3">—</text>
+<text transform="matrix(1 0 0 1 412.8737 499.0882)" class="st4 st2 st3">—</text>
 <text transform="matrix(1 0 0 1 268.936 293.5108)" class="st1 st2 st3">ЖТ</text>
 <text transform="matrix(1 0 0 1 407.4779 293.4936)" class="st1 st2 st3">ПЛ</text>
-<text transform="matrix(1 0 0 1 482.3962 293.5366)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 482.3962 293.5366)" class="st1 st2 st3">—</text>
 <text transform="matrix(1 0 0 1 550.6238 293.5452)" class="st1 st2 st3">ЛГ</text>
 <text transform="matrix(1 0 0 1 305.0424 356.7132)" class="st1 st2 st3">ЧК</text>
 <text transform="matrix(1 0 0 1 380.2413 355.3517)" class="st1 st2 st3">КГ</text>
 <text transform="matrix(1 0 0 1 337.6628 419.8899)" class="st1 st2 st3">МК</text>
-<text transform="matrix(1 0 0 1 269.5742 419.9006)" class="st1 st2 st3"></text>
+<text transform="matrix(1 0 0 1 269.5742 419.9006)" class="st1 st2 st3">—</text>
 	</g>
 </svg>

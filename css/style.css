@@ -17,7 +17,9 @@ body {
       background-color: gray;
       color: #f1f1f1;
       border-radius: 0.5em;
-      border: none; }
+      border: none;
+      cursor: pointer;
+      font-style: oblique; }
 
 main#country, main#regions {
   display: grid;
@@ -30,6 +32,11 @@ main#country, main#regions {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr; }
+    main#country div#header-map div#oblastName, main#country div#header-map-regions div#oblastName, main#regions div#header-map div#oblastName, main#regions div#header-map-regions div#oblastName {
+      position: absolute; }
+    main#country div#header-map h4#currentOblast, main#country div#header-map-regions h4#currentOblast, main#regions div#header-map h4#currentOblast, main#regions div#header-map-regions h4#currentOblast {
+      font-style: italic;
+      color: grey; }
   main#country header, main#regions header {
     margin: 1em 3em; }
     main#country header h1, main#regions header h1 {
@@ -39,11 +46,15 @@ main#country, main#regions {
       font-weight: unset; }
   main#country figure, main#regions figure {
     padding: 0;
-    margin: 0; }
+    margin: 0;
+    background-color: #f1f1f1; }
   main#country div.navigation, main#regions div.navigation {
     margin-top: 1em; }
     main#country div.navigation div.directions_title, main#regions div.navigation div.directions_title {
       margin: 0.5em 0.4em 0 0.8em; }
+      main#country div.navigation div.directions_title i, main#regions div.navigation div.directions_title i {
+        font-size: 0.8em;
+        color: grey; }
     main#country div.navigation #meta-navigation svg #Layer_1 path, main#country div.navigation #meta-navigation svg text, main#regions div.navigation #meta-navigation svg #Layer_1 path, main#regions div.navigation #meta-navigation svg text {
       cursor: pointer; }
     main#country div.navigation div.search, main#regions div.navigation div.search {
@@ -53,6 +64,12 @@ main#country, main#regions {
       padding-bottom: 0.5em; }
       main#country div.navigation div.search div.cityName, main#country div.navigation div.search div.cityName-regions, main#regions div.navigation div.search div.cityName, main#regions div.navigation div.search div.cityName-regions {
         margin: 1em 0.4em 0.5em 0.8em; }
+        main#country div.navigation div.search div.cityName i, main#country div.navigation div.search div.cityName-regions i, main#regions div.navigation div.search div.cityName i, main#regions div.navigation div.search div.cityName-regions i {
+          font-size: 0.8em;
+          color: grey; }
+        main#country div.navigation div.search div.cityName p, main#country div.navigation div.search div.cityName-regions p, main#regions div.navigation div.search div.cityName p, main#regions div.navigation div.search div.cityName-regions p {
+          margin: 0;
+          padding-top: 0.5em; }
       main#country div.navigation div.search div#bloodhound, main#regions div.navigation div.search div#bloodhound {
         margin: 1em 0.4em 0.5em 0.4em; }
       main#country div.navigation div.search .tt-input,
@@ -93,7 +110,7 @@ main#country, main#regions {
       main#country div.navigation div.search .tt-suggestion p, main#regions div.navigation div.search .tt-suggestion p {
         margin: 0; }
     main#country div.navigation .table, main#country div.navigation .table-region, main#regions div.navigation .table, main#regions div.navigation .table-region {
-      padding: 0.5em; }
+      padding-left: 0.5em; }
       main#country div.navigation .table .route, main#country div.navigation .table-region .route, main#regions div.navigation .table .route, main#regions div.navigation .table-region .route {
         padding: 0.5em;
         margin: 0.5em;
@@ -111,7 +128,7 @@ main#country, main#regions {
         padding: 0.3em;
         transition: all 1.5s; }
       main#country div.navigation .table p.routeTitle.open, main#country div.navigation .table-region p.routeTitle.open, main#regions div.navigation .table p.routeTitle.open, main#regions div.navigation .table-region p.routeTitle.open {
-        background-color: #ea3e13;
+        background-color: #EB00FF;
         margin-block-start: 0;
         margin-block-end: 0;
         color: white; }
@@ -130,7 +147,7 @@ article {
 .read {
   margin: 3em 1em 0 1em; }
   .read h3 {
-    color: #ea3e13;
+    color: #EB00FF;
     font-weight: 400;
     margin: 0; }
     .read h3.upper {
@@ -142,7 +159,7 @@ article {
     margin-top: 1em; }
   .read a {
     text-decoration: none;
-    color: #ea3e13;
+    color: #EB00FF;
     font-weight: 400; }
   @media screen and (min-width: 577px) {
     .read {

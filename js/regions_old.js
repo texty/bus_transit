@@ -2,9 +2,14 @@ var regions = (function(){
 
     var module = {};
 
-    var remakeMap = false;
+    var remakeBackgroundMap = false;
+    var remakeSelectedMap = false;
 
     module.draw = function(basic, coords, oblastData) {
+
+        var backgroundRouteColor = '#b7acac';
+        var selectedRouteColor = "#EB00FF";
+
 
 
         var oblastMap = 'Чернігівська область';
@@ -12,6 +17,8 @@ var regions = (function(){
         var names = basic.filter(function(d) {return d.regulative_institution == oblastMap});
 
         var tree = rbush();
+
+        d3.select('h4#currentOblast').text("На карті: " + oblastMap);
 
 
         var nested_data = d3.nest()
@@ -32,6 +39,12 @@ var regions = (function(){
         });
 
         basic = basic.filter(d => d.coords != 'NO');
+
+        var cityNamesForCount = basic.map(d => d.first);
+        var aCount = new Map([...new Set(cityNamesForCount)].map(
+            x => [x, cityNamesForCount.filter(y => y === x).length]
+        ));
+
 
         var nested_names = d3.nest()
             .key(function (d) {
@@ -113,7 +126,7 @@ var regions = (function(){
             "ВН": {'name':"Вінницька область", 'city': 'Вінниця', 'status': false}
         };
 
-        d3.xml("img/hexmap.svg", {crossOrigin: "anonymous"}).then(function(xml) {
+        d3.xml("img/hexmap (1).svg", {crossOrigin: "anonymous"}).then(function(xml) {
             var navMap = d3.select("#meta-navigation").node().appendChild(xml.documentElement);
 
             $('#Layer_1 text').on('click', d => {
@@ -166,11 +179,12 @@ var regions = (function(){
                 }
                 geo = oblastData.features.filter(d => d.properties.LABEL == oblastMap);
                 oblastBoundary = L.geoJSON(geo[0], {
-                    color:"#808080",
+                    color:"#968787",
                     fill: "#000",
-                    weight:2,
+                    weight:1,
                     // stroke-width:1,
                     fillOpacity: 0,
+                    opacity: 0.5,
                     bubblingMouseEvents: false
                 }).addTo(map);
 
@@ -182,7 +196,10 @@ var regions = (function(){
                     var b = JSON.parse(JSON.stringify( d ));
 
                     a.coords = d.coords[0];
+                    a.status = true;
                     b.coords = d.coords[1];
+                    b.status = false
+
 
                     dataForMarkers.push(a);
                     dataForMarkers.push(b);
@@ -190,6 +207,8 @@ var regions = (function(){
 
                 // потрібно ще додати фільтр на ту область
                 geojson = dataForMarkers.map(function (d) {
+                    d.status == true ? d.counts = aCount.get(d.departure) : d.counts = 1;
+
                     return {
                         type: "Feature",
                         properties: d,
@@ -201,32 +220,38 @@ var regions = (function(){
                 });
 
 
+                var max = d3.max(geojson.map(d => d.properties.counts));
 
-                var geojsonMarkerOptions = {
-                    radius: 4,
-                    fillColor: "#808080",
-                    color: "#000",
-                    weight: 0,
-                    opacity: 1,
-                    fillOpacity: 0.8,
-                    bubblingMouseEvents: false
-                };
+
+                var scale = d3.scaleLog()
+                    .domain([1, max]) // input
+                    .range([3, 10]); // output
+
+                console.log("_______________________________")
+
                 //created leaflet markers
+                console.log("add markers");
                 markers = L.geoJSON(geojson, {
                     pointToLayer: function (feature, latlng) {
 
-                        try {
-                            return L.circleMarker(latlng, geojsonMarkerOptions)
-                        }
-                        catch (err) {
-                        }
+                        return L.circleMarker(latlng, {
+                            radius: scale(feature.properties.counts),
+                            fillColor: "#808080",
+                            color: "#000",
+                            weight: 0,
+                            opacity: 1,
+                            fillOpacity: 0.5,
+                            bubblingMouseEvents: false
+                        })
 
                     }
                 }).addTo(map);
 
-                map.fitBounds(markers.getBounds());
-                remakeMap = true;
+                console.log("SET FLAGS = TRUE");
+                remakeBackgroundMap = true, remakeSelectedMap = true;
 
+                console.log("fit bounds");
+                map.fitBounds(markers.getBounds());
                 // map.flyTo([d.sourceTarget.feature.properties.Lat, d.sourceTarget.feature.properties.Long], 6);
 
 
@@ -245,7 +270,7 @@ var regions = (function(){
             });
 
             $('#Layer_1 text').on('mouseover', d => {
-                d.target.style.fill = '#ea3e13'
+                d.target.style.fill = '#eb00ff'
             });
             $('#Layer_1 text').on('mouseout', d => {
                 d.target.style.fill = ''
@@ -270,15 +295,16 @@ var regions = (function(){
                 name: 'states',
                 source: states
             });
-        var map = L.map('map-regions')//.setView([49.272021, 31.437523], 6);
+        var map = L.map('map-regions', { zoomControl:false })//.setView([49.272021, 31.437523], 6);
 
         var geo = oblastData.features.filter(d => d.properties.LABEL == oblastMap);
         var oblastBoundary = L.geoJSON(geo[0], {
-            color:"#808080",
+            color:"#968787",
             fill: "#000",
-            weight:2,
+            weight:1,
             // stroke-width:1,
             fillOpacity: 0,
+            opacity: 0.5,
             bubblingMouseEvents: false
         }).addTo(map);
 
@@ -295,22 +321,18 @@ var regions = (function(){
             // style: 'data/labels.json',
             // pane: 'tilePane'
         }).addTo(map);
-        //
-        // var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //     maxZoom: 19,
-        //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        // }).addTo(map);
 
 
-        var geojsonMarkerOptions = {
-            radius: 4,
-            fillColor: "#808080",
-            color: "#000",
-            weight: 0,
-            opacity: 1,
-            fillOpacity: 0.8,
-            bubblingMouseEvents: false
-        };
+
+        // var geojsonMarkerOptions = {
+        //     radius: 4,
+        //     fillColor: "#808080",
+        //     color: "#000",
+        //     weight: 0,
+        //     opacity: 1,
+        //     fillOpacity: 0.5,
+        //     bubblingMouseEvents: false
+        // };
         var tree = rbush();
 
         // created geojson out of basic data
@@ -331,7 +353,15 @@ var regions = (function(){
             pointToLayer: function (feature, latlng) {
 
                 try {
-                    return L.circleMarker(latlng, geojsonMarkerOptions)
+                    return L.circleMarker(latlng, {
+                        radius: scale(feature.properties.counts),
+                        fillColor: "#808080",
+                        color: "#000",
+                        weight: 0,
+                        opacity: 1,
+                        fillOpacity: 0.5,
+                        bubblingMouseEvents: false
+                    })
                 }
                 catch (err) {
                     debugger;
@@ -345,27 +375,6 @@ var regions = (function(){
             var firstDraw = true;
             var prevZoom;
 
-            // var projectedPolygon;
-            //
-            // var polygonLatLngs = [
-            //     [51.509, -0.08],
-            //     [51.503, -0.06],
-            //     [51.51, -0.047],
-            //     [51.509, -0.08]
-            // ];
-            //
-            // var circleCenter = [51.508, -0.11];
-            // var projectedCenter;
-            // var circleRadius = 85;
-            //
-            // var triangle = new PIXI.Graphics();
-            // triangle.popup = L.popup()
-            //     .setLatLng([51.5095, -0.063])
-            //     .setContent('I am a polygon.');
-            // var circle = new PIXI.Graphics();
-            // circle.popup = L.popup()
-            //     .setLatLng(circleCenter)
-            //     .setContent('I am a circle.');
 
 
             var pixiContainer = new PIXI.Graphics();
@@ -375,6 +384,7 @@ var regions = (function(){
             var doubleBuffering = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
             return L.pixiOverlay(function (utils) {
+                console.log('pixi background hello')
                 if (frame) {
                     cancelAnimationFrame(frame);
                     frame = null;
@@ -412,13 +422,15 @@ var regions = (function(){
                     // circleRadius = circleRadius / scale;
                 }
 
-                if (firstDraw || prevZoom !== zoom || remakeMap == true) {
-
-                    console.log('event draw');
+                if (firstDraw || prevZoom !== zoom || remakeBackgroundMap == true) {
+                    console.log("backgound draw");
+                    console.log("zoom !== prevZoom : " + (prevZoom !== zoom) + ", remakeBackgroundMap: " + remakeBackgroundMap);
+                    // console.log("pixi draw");
+                    // console.log('event draw');
 
                     container.clear();
 
-                    container.beginFill(0x00CCFF);
+                    // container.beginFill(0x00CCFF);
 
                     var stringToColour = function (str) {
                         var hash = 0;
@@ -441,15 +453,26 @@ var regions = (function(){
                         // if false it would disappear
                         container.visible = true;
 
+                        // var backgroundRouteColor = '#b7acac';
+                        // container.beginFill(0xFF3300);
+                        container.lineStyle((0.5 / scale), backgroundRouteColor.replace('#', '0x'), 0.5);
 
-                        var color = '#7e6f6f';
-                        container.beginFill(0xFF3300);
-                        container.lineStyle((0.5 / scale), color.replace('#', '0x'), 1);
+                        var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
+                        var num = Math.random(0,10); // this will get a number between 1 and 99;
 
+                        num = (distance/600)*num;
+                        // num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
 
-                        // draw a shape
+                        var midPoint = turf.midpoint(turf.point(d.coords[0]), turf.point(d.coords[1])).geometry.coordinates;
+                        midPoint = [midPoint[0]+num, midPoint[1]+num];
+                        //
+                        // // draw a shape
                         container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
-                        container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+                        //
+                        container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
+                        // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+
+
                         container.endFill();
 
                         bounds = L.bounds(L.bounds(d.coords));
@@ -464,8 +487,9 @@ var regions = (function(){
 
 
                     });
-                    console.log(lineCoord)
-
+                    // console.log(lineCoord)
+                    remakeBackgroundMap = false;
+                    console.log("remakeBackground = false")
 
                 }
 
@@ -539,8 +563,9 @@ var regions = (function(){
                 });
 
 
-                if (firstDraw || prevZoom !== zoom || remakeMap == true) {
-
+                if (firstDraw || prevZoom !== zoom || remakeSelectedMap == true) {
+                    console.log("selected draw");
+                    console.log("zoom !== prevZoom : " + (prevZoom !== zoom) + ", remakeSelectedMap: " + remakeSelectedMap);
 
                     if (selected && selected.name == 'selectedMarchRoute') {
                         drawSelectedMarchRoute(selected);
@@ -563,14 +588,25 @@ var regions = (function(){
                                 if (d.coords != 'NO') {
                                     container.visible = true;
 
-                                    var color = '#ea3e13';
-                                    container.beginFill(0xFF3300);
-                                    container.lineStyle((3 / scale), color.replace('#', '0x'), 1);
 
+                                    // container.beginFill(0xFF3300);
+                                    container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 0.5);
 
-                                    // draw a shape
+                                    var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
+                                    var num = Math.random(0,10); // this will get a number between 1 and 99;
+
+                                    num = (distance/600)*num;
+                                    // num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
+
+                                    var midPoint = turf.midpoint(turf.point(d.coords[0]), turf.point(d.coords[1])).geometry.coordinates;
+                                    midPoint = [midPoint[0]+num, midPoint[1]+num];
+                                    //
+                                    // // draw a shape
                                     container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
-                                    container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+                                    //
+                                    container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
+                                    // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+
                                     container.endFill();
                                 }
                             });
@@ -578,6 +614,7 @@ var regions = (function(){
                             var march_route_list = nested_names['$' + selectedCity.feature[0].first.trim()][0];
 
                             createSideNav(march_route_list);
+                            //here to click
                         }
 
                         setEventOnList(march_route_list);
@@ -597,6 +634,7 @@ var regions = (function(){
 
                             createSideNav(march_route_list);
 
+
                         }
 
                         setEventOnList(march_route_list);
@@ -614,14 +652,23 @@ var regions = (function(){
 
                                 if (d.coords != 'NO') {
 
-                                    var color = '#ea3e13';
-                                    container.beginFill(0xFF3300);
-                                    container.lineStyle((3 / scale), color.replace('#', '0x'), 1);
+                                    container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 0.5);
 
+                                    var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
+                                    var num = Math.random(0,10); // this will get a number between 1 and 99;
 
-                                    // draw a shape
+                                    num = (distance/1000)*num;
+                                    // num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
+
+                                    var midPoint = turf.midpoint(turf.point(d.coords[0]), turf.point(d.coords[1])).geometry.coordinates;
+                                    midPoint = [midPoint[0]+num, midPoint[1]+num];
+                                    //
+                                    // // draw a shape
                                     container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
-                                    container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+                                    //
+                                    container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
+                                    // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+
                                     container.endFill();
                                 }
                             });
@@ -648,6 +695,18 @@ var regions = (function(){
                         renderer.render(container);
                         // map.flyTo([d.sourceTarget.feature.properties.Lat, d.sourceTarget.feature.properties.Long], 6);
 
+                    });
+
+                    markers.on('mouseover', d => {
+                        d.layer.setStyle({fillColor: selectedRouteColor});
+                        var popup = L.popup()
+                            .setLatLng(d.latlng)
+                            .setContent(d.layer.feature.properties.departure)
+                            .openOn(map);
+
+                    });
+                    markers.on('mouseout', d => {
+                        d.layer.setStyle({fillColor: "#929292"});
                     });
 
                     map.on('click', function (d) {
@@ -733,14 +792,25 @@ var regions = (function(){
 
                         container.clear();
 
-                        var color = '#ea3e13';
+                        // selectedRouteColor = '#B1EA00';
 
-                        container.lineStyle(3 / scale, color.replace('#', '0x'), 1);
+                        // container.beginFill(0xFF3300);
+                        container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 0.5);
 
-                        // draw a shape
+                        var distance = turf.distance(turf.point(current.feature.coords[0]), turf.point(current.feature.coords[1]));
+                        var num = Math.random(0,10); // this will get a number between 1 and 99;
+
+                        num = (distance/1000)*num;
+                        // num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
+
+                        var midPoint = turf.midpoint(turf.point(current.feature.coords[0]), turf.point(current.feature.coords[1])).geometry.coordinates;
+                        midPoint = [midPoint[0]+num, midPoint[1]+num];
+                        //
+                        // // draw a shape
                         container.moveTo(project(current.feature.coords[0]).x, project(current.feature.coords[0]).y);
-                        container.lineTo(project(current.feature.coords[1]).x, project(current.feature.coords[1]).y);
-                        container.endFill();
+                        //
+                        container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(current.feature.coords[1]).x, project(current.feature.coords[1]).y);
+                        // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
 
                         renderer.render(container);
                     }
@@ -832,10 +902,12 @@ var regions = (function(){
 
                     })
 
+                    remakeSelectedMap = false;
+                    console.log("remakeSelected = false")
+
                 }
 
                 firstDraw = false;
-                remakeMap = false;
                 prevZoom = zoom;
                 renderer.render(container);
 
@@ -858,10 +930,13 @@ var regions = (function(){
 
             d3.select('.table-region').selectAll('*').remove();
 
-            d3.select('div.search p.cityName-regions')
-                .text("Обране місто: " + march_route_list.key);
+            // d3.select('div.search p.cityName-regions')
+            //     .text("Обране місто: " + march_route_list.key);
 
-            var cityNames = d3.select('div.table-region').append('div')
+            d3.select('div.search .cityName-regions b p')
+                .text( march_route_list.key );
+
+            var cityNames = d3.select('div.table-region').append('div');
             // .text(march_route_list.key)
             // .attr('class', 'cityTitle');
 //
@@ -900,7 +975,7 @@ var regions = (function(){
 
                     return `
 					<p class="routeTitle">${title}</p>
-					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #ea3e13" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
+					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #eb00ff" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
 					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
 					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>
 					<p class="routeProperty">${ 'Клас комфортності автобусів: ' + d.bus_comfort_level || 'Клас комфортності автобусів: немає даних'}</p>

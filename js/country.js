@@ -4,35 +4,38 @@ var country = (function(){
 
     module.draw = function(basic, coords, oblastData) {
 
+        var backgroundRouteColor = '#b7acac';
+        var selectedRouteColor = "#EB00FF";
+
         var names = basic.filter(function(d) {return d.regulative_institution == "Україна"});
 
-        var oblast_map = {
-            "ВЛ": {'name':'Волинська область', 'city': 'Луцьк', 'status': true},
-            "ІФ": {'name':"Івано-Франківська область", 'city': 'Івано-Франківськ', 'status': true},
-            "ХМ": {'name':"Хмельницька область", 'city': 'Хмельницький', 'status': false},
-            "ЗК": {'name':"Закарпатська область", 'city': 'Ужгород', 'status': false},
-            "КВ": {'name':"Київська область", 'city': 'Київ', 'status': false},
-            "РВ": {'name':"Рівненська область", 'city': 'Рівне', 'status': true},
-            "ЛВ": {'name':"Львівська область", 'city': 'Львів', 'status': false},
-            "ТР": {'name':"Тернопільська область", 'city': 'Тернопіль', 'status': false},
-            "СМ": {'name':"Сумська область", 'city': 'Суми', 'status': true},
-            "ЧГ": {'name':"Чернігівська область", 'city': 'Чернігів', 'status': true},
-            "ДН": {'name':"Дніпропетровська область", 'city': 'Дніпропетровськ', 'status': false},
-            "ДО": {'name':"Донецька область", 'city': 'Краматорськ', 'status': true},
-            "ЗП": {'name':"Запорізька область", 'city': 'Запоріжжя', 'status': true},
-            "ХР": {'name':"Херсонська область", 'city': 'Херсон', 'status': true},
-            "ОД": {'name':"Одеська область", 'city': 'Одеса', 'status': true},
-            "ЧН": {'name':"Чернівецька область", 'city': 'Чернівці', 'status': false},
-            "КР": {'name':"Автономна республіка Крим", 'city': 'Севастополь', 'status': false},
-            "ЖТ": {'name':"Житомирська область", 'city': 'Житомир', 'status': true},
-            "ПЛ": {'name':"Полтавська область", 'city': 'Полтава', 'status': true},
-            "ХК": {'name':"Харківська область", 'city': 'Харків', 'status': false},
-            "ЛГ": {'name':"Луганська область", 'city': 'Сєвєродонецьк', 'status': true},
-            "ЧК": {'name':"Черкаська область", 'city': 'Черкаси', 'status': true},
-            "КГ": {'name':"Кіровоградська область", 'city': 'Кіровоград', 'status': true},
-            "МК": {'name':"Миколаївська область", 'city': 'Миколаїв', 'status': true},
-            "ВН": {'name':"Вінницька область", 'city': 'Вінниця', 'status': false}
-        };
+        // var oblast_map = {
+        //     "ВЛ": {'name':'Волинська область', 'city': 'Луцьк', 'status': true},
+        //     "ІФ": {'name':"Івано-Франківська область", 'city': 'Івано-Франківськ', 'status': true},
+        //     "ХМ": {'name':"Хмельницька область", 'city': 'Хмельницький', 'status': false},
+        //     "ЗК": {'name':"Закарпатська область", 'city': 'Ужгород', 'status': false},
+        //     "КВ": {'name':"Київська область", 'city': 'Київ', 'status': false},
+        //     "РВ": {'name':"Рівненська область", 'city': 'Рівне', 'status': true},
+        //     "ЛВ": {'name':"Львівська область", 'city': 'Львів', 'status': false},
+        //     "ТР": {'name':"Тернопільська область", 'city': 'Тернопіль', 'status': false},
+        //     "СМ": {'name':"Сумська область", 'city': 'Суми', 'status': true},
+        //     "ЧГ": {'name':"Чернігівська область", 'city': 'Чернігів', 'status': true},
+        //     "ДН": {'name':"Дніпропетровська область", 'city': 'Дніпропетровськ', 'status': false},
+        //     "ДО": {'name':"Донецька область", 'city': 'Краматорськ', 'status': true},
+        //     "ЗП": {'name':"Запорізька область", 'city': 'Запоріжжя', 'status': true},
+        //     "ХР": {'name':"Херсонська область", 'city': 'Херсон', 'status': true},
+        //     "ОД": {'name':"Одеська область", 'city': 'Одеса', 'status': true},
+        //     "ЧН": {'name':"Чернівецька область", 'city': 'Чернівці', 'status': false},
+        //     "КР": {'name':"Автономна республіка Крим", 'city': 'Севастополь', 'status': false},
+        //     "ЖТ": {'name':"Житомирська область", 'city': 'Житомир', 'status': true},
+        //     "ПЛ": {'name':"Полтавська область", 'city': 'Полтава', 'status': true},
+        //     "ХК": {'name':"Харківська область", 'city': 'Харків', 'status': false},
+        //     "ЛГ": {'name':"Луганська область", 'city': 'Сєвєродонецьк', 'status': true},
+        //     "ЧК": {'name':"Черкаська область", 'city': 'Черкаси', 'status': true},
+        //     "КГ": {'name':"Кіровоградська область", 'city': 'Кіровоград', 'status': true},
+        //     "МК": {'name':"Миколаївська область", 'city': 'Миколаїв', 'status': true},
+        //     "ВН": {'name':"Вінницька область", 'city': 'Вінниця', 'status': false}
+        // };
 
 
 
@@ -104,7 +107,6 @@ var country = (function(){
                     'route_regularity': name.route_regularity,
                     'coords': [[+nested_data['$' + name.first.trim()][0].Lat, +nested_data['$' + name.first.trim()][0].Long], [+nested_data['$' + name.second.trim()][0].Lat, +nested_data['$' + name.second.trim()][0].Long]],
                     'regiregulative_institution': name.regulative_institution,
-                    'regiregulative_institution': name.coun
                 }
             }
             else {
@@ -117,18 +119,12 @@ var country = (function(){
             return d != 'no'
         });
 
-        // var nested_routes = d3.nest().key(function (d) {
-        //     return d.id;
-        // }).map(lineCoord);
 
         const nested_operators = d3.nest().key(function (d) {
             return 'id_' + d.company_id;
         }).map(lineCoord);
 
 
-        // var operator_names = d3.map(function (d) {
-        //     return d.route_operator.trim();
-        // }).entries(lineCoord);
         var city_names = d3.nest().key(function (d) {
             return d.departure.trim();
         }).entries(lineCoord)
@@ -156,13 +152,16 @@ var country = (function(){
         var map = L.map('map', { zoomControl:false }).setView([49.272021, 31.437523], 6);
 
         var oblastBoundaries = L.geoJSON(oblastData, {
-            color:"#808080",
+            color:"#968787",
             fill: "#000",
-            weight:0.5,
+            weight:1,
             // stroke-width:1,
             fillOpacity: 0,
+            opacity: 0.5,
             bubblingMouseEvents: false
         }).addTo(map);
+
+        oblastBoundaries.bringToBack();
 
         map.fitBounds(oblastBoundaries.getBounds());
 
@@ -174,20 +173,10 @@ var country = (function(){
             maxZoom: 9,
             minZoom: 6,
             style: 'country.json'
-            // style: 'data/labels.json',
-            // pane: 'tilePane'
         }).addTo(map);
 
 
-        // var geojsonMarkerOptions = {
-        //     radius: 4,
-        //     fillColor: "#808080",
-        //     color: "#000",
-        //     weight: 0,
-        //     opacity: 1,
-        //     fillOpacity: 0.8,
-        //     bubblingMouseEvents: false
-        // };
+
         var tree = rbush();
 
         var max = d3.max(geojson.map(d => d.properties.counts));
@@ -202,22 +191,15 @@ var country = (function(){
         //created leaflet markers
         var markers = L.geoJSON(geojson, {
             pointToLayer: function (feature, latlng) {
-
-                try {
                     return L.circleMarker(latlng, {
                         radius: scale(feature.properties.counts),
                         fillColor: "#808080",
                         color: "#000",
                         weight: 0,
                         opacity: 1,
-                        fillOpacity: 0.8,
+                        fillOpacity: 0.5,
                         bubblingMouseEvents: false
                     })
-                }
-                catch (err) {
-                    debugger;
-                }
-
             }
         }).addTo(map);
 
@@ -296,7 +278,7 @@ var country = (function(){
 
                     container.clear();
 
-                    container.beginFill(0x00CCFF);
+                    // container.beginFill(0x00CCFF);
 
                     var stringToColour = function (str) {
                         var hash = 0;
@@ -320,22 +302,24 @@ var country = (function(){
                         container.visible = true;
 
 
-                        var color = '#7e6f6f';
+                        // var backgroundRouteColor = '#b7acac';
                         // container.beginFill(0xFF3300);
-                        container.lineStyle((0.5 / scale), color.replace('#', '0x'), 0.5);
+                        container.lineStyle((0.5 / scale), backgroundRouteColor.replace('#', '0x'), 0.5);
 
-                        // var num = Math.floor(Math.random()*2); // this will get a number between 1 and 99;
-                        // num *= Math.floor(Math.random()/2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
-                        //
-                        //
-                        // var midPoint = turf.midpoint(turf.point(d.coords[0]), turf.point(d.coords[1])).geometry.coordinates;
-                        // midPoint = [midPoint[0]-num, midPoint[1]-num];
+                        var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
+                        var num = Math.random(0,10); // this will get a number between 1 and 99;
+
+                        num = (distance/1000)*num;
+                        // num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
+
+                        var midPoint = turf.midpoint(turf.point(d.coords[0]), turf.point(d.coords[1])).geometry.coordinates;
+                        midPoint = [midPoint[0]+num, midPoint[1]+num];
                         //
                         // // draw a shape
                         container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
                         //
-                        // container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
-                        container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+                        container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
+                        // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
 
 
 
@@ -442,15 +426,27 @@ var country = (function(){
                                 if (d.coords != 'NO') {
                                     container.visible = true;
 
-                                    var color = '#ea3e13';
-                                    container.beginFill(0xFF3300);
-                                    container.lineStyle((3 / scale), color.replace('#', '0x'), 1);
+                                    // selectedRouteColor = '#EA454E';
 
+                                    // container.beginFill(0xFF3300);
+                                    container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 0.5);
 
-                                    // draw a shape
+                                    var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
+                                    var num = Math.random(0,10); // this will get a number between 1 and 99;
+
+                                    num = (distance/1000)*num;
+                                    // num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
+
+                                    var midPoint = turf.midpoint(turf.point(d.coords[0]), turf.point(d.coords[1])).geometry.coordinates;
+                                    midPoint = [midPoint[0]+num, midPoint[1]+num];
+                                    //
+                                    // // draw a shape
                                     container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
-                                    container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
-                                    container.endFill();
+                                    //
+                                    container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
+                                    // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+
+
                                 }
                             });
 
@@ -477,10 +473,13 @@ var country = (function(){
 
                             createSideNav(march_route_list);
 
+
                         }
 
                         setEventOnList(march_route_list);
                         operatorEvent();
+
+                        // $('[data=' + selected.feature.id + ']').click()
 
                     }
 
@@ -494,15 +493,27 @@ var country = (function(){
 
                                 if (d.coords != 'NO') {
 
-                                    var color = '#ea3e13';
-                                    container.beginFill(0xFF3300);
-                                    container.lineStyle((3 / scale), color.replace('#', '0x'), 1);
+                                    // selectedRouteColor = '#B1EA00';
 
+                                    // container.beginFill(0xFF3300);
+                                    container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 0.5);
 
-                                    // draw a shape
+                                    var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
+                                    var num = Math.random(0,10); // this will get a number between 1 and 99;
+
+                                    num = (distance/1000)*num;
+                                    // num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
+
+                                    var midPoint = turf.midpoint(turf.point(d.coords[0]), turf.point(d.coords[1])).geometry.coordinates;
+                                    midPoint = [midPoint[0]+num, midPoint[1]+num];
+                                    //
+                                    // // draw a shape
                                     container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
-                                    container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
-                                    container.endFill();
+                                    //
+                                    container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
+                                    // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
+
+
                                 }
                             });
 
@@ -531,7 +542,7 @@ var country = (function(){
                     });
 
                     markers.on('mouseover', d => {
-                        d.layer.setStyle({fillColor: "#ea3e13"});
+                        d.layer.setStyle({fillColor: selectedRouteColor});
                         var popup = L.popup()
                             .setLatLng(d.latlng)
                             .setContent(d.layer.feature.properties.new_name)
@@ -618,16 +629,29 @@ var country = (function(){
 
                         container.clear();
 
-                        var color = '#ea3e13';
+                        // selectedRouteColor = '#B1EA00';
 
-                        container.lineStyle(3 / scale, color.replace('#', '0x'), 1);
+                        // container.beginFill(0xFF3300);
+                        container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 0.5);
 
-                        // draw a shape
+                        var distance = turf.distance(turf.point(current.feature.coords[0]), turf.point(current.feature.coords[1]));
+                        var num = Math.random(0,10); // this will get a number between 1 and 99;
+
+                        num = (distance/1000)*num;
+                        // num *= Math.floor(Math.random()*2) == 1 ? 1 : -1; // this will add minus sign in 50% of cases
+
+                        var midPoint = turf.midpoint(turf.point(current.feature.coords[0]), turf.point(current.feature.coords[1])).geometry.coordinates;
+                        midPoint = [midPoint[0]+num, midPoint[1]+num];
+                        //
+                        // // draw a shape
                         container.moveTo(project(current.feature.coords[0]).x, project(current.feature.coords[0]).y);
-                        container.lineTo(project(current.feature.coords[1]).x, project(current.feature.coords[1]).y);
-                        container.endFill();
+                        //
+                        container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(current.feature.coords[1]).x, project(current.feature.coords[1]).y);
+                        // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
 
                         renderer.render(container);
+
+
                     }
 
                     function operatorEvent()
@@ -741,7 +765,7 @@ var country = (function(){
 
             d3.select('.table').selectAll('*').remove();
 
-            d3.select('div.search .cityName b')
+            d3.select('div.search .cityName b p')
                 .text( march_route_list.key );
 
             var cityNames = d3.select('div.table').append('div');
@@ -783,7 +807,7 @@ var country = (function(){
 
                     return `
 					<p class="routeTitle">${title}</p>
-					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #ea3e13" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
+					<p data="${ d.id }" title="Показати всі маршрути цієї компанії" style="color: #EB00FF" id="${ d.company_id }" class="routeProperty">${ 'Перевізник: ' + d.company_name || 'Перевізник: немає даних'}</p>
 					<p class="routeProperty">${ 'Тривалість ліцензії: ' + d.license_data || 'Тривалість ліцензії: немає даних'}</p>
 					<p class="routeProperty">${ 'Найстарший автобус на маршруті: ' + d.bus_age || 'Найстарший автобус на маршруті: немає даних'}</p>
 					<p class="routeProperty">${ 'Клас комфортності автобусів: ' + d.bus_comfort_level || 'Клас комфортності автобусів: немає даних'}</p>

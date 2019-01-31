@@ -34,8 +34,6 @@
 </head>
 <body>
 
-
-
 <main id="country" style="">
     <div id="left">
         <div id="header-map">
@@ -61,10 +59,10 @@
                 <input class="typeahead" type="text" placeholder="Назва міста">
             </div>
             <div class="cityName">
-                <i>
+                    <i>
                     Обране місто:
-                </i>
-
+                     </i>
+                <br>
                 <b><p></p></b>
             </div>
         </div>
@@ -75,7 +73,6 @@
         </div>
         <div class="table">
         </div>
-
     </div>
 </main>
 
@@ -85,7 +82,9 @@
             <header>
                 <h1>Наступна зупинка</h1>
                 <h3>Мережа автобусних маршрутів в Україні</h3>
+                <h4 id="currentOblast"></h4>
             </header>
+            <div id="oblastName"></div>
             <figure id="map-regions">
             </figure>
         </div>
@@ -105,9 +104,21 @@
             <div id="bloodhound-regions">
                 <input class="typeahead-regions" type="text" placeholder="Назва міста">
             </div>
-            <p class="cityName-regions"></p>
+            <div class="cityName-regions">
+                <i>
+                    Обране місто:
+                </i>
+                <br>
+                <b><p></p></b>
+            </div>
+        </div>
+        <div class="directions_title">
+            <i>
+                Напрямки:
+            </i>
         </div>
         <div class="table-region"></div>
+    </div>
 
     </div>
 </main>
