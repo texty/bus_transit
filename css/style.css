@@ -1,74 +1,311 @@
-/*
-Error: Undefined variable: "$break-large".
-        on line 58 of style.scss
+body {
+  font-family: sans-serif;
+  color: #111111;
+  background: #f1f1f1;
+  margin: 0;
+  padding: 0; }
+  body * {
+    box-sizing: border-box;
+    outline-style: none; }
+  body div.buttons {
+    margin-left: 0.6em;
+    width: 70%;
+    display: flex;
+    justify-content: space-between; }
+    body div.buttons button {
+      font-size: larger;
+      background-color: gray;
+      color: #f1f1f1;
+      border-radius: 0.5em;
+      border: none;
+      cursor: pointer; }
 
-53: main#country, main#regions {
-54:   //height: 90vh;
-55:   display: grid;
-56:   grid-template-columns: 5fr 2fr;
-57: 
-58:   @media #{$break-large} {
-59:       display: grid;
-60:       grid-template-columns: 5fr 1fr;
-61:   }
-62: 
-63:   @media #{$mobile} {
+main#country, main#regions {
+  display: grid;
+  grid-template-columns: 5fr 2fr; }
+  @media screen and (min-width: 1400px), screen and (min-width: 950px) {
+    main#country, main#regions {
+      display: grid;
+      grid-template-columns: 5fr 1fr; } }
+  @media screen and (max-width: 577px) {
+    main#country, main#regions {
+      display: grid;
+      grid-template-columns: 2fr 2fr; } }
+  main#country div#header-map, main#country div#header-map-regions, main#regions div#header-map, main#regions div#header-map-regions {
+    height: 100vh;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr; }
+    main#country div#header-map div#oblastName, main#country div#header-map-regions div#oblastName, main#regions div#header-map div#oblastName, main#regions div#header-map-regions div#oblastName {
+      position: absolute; }
+    main#country div#header-map h4#currentOblast, main#country div#header-map-regions h4#currentOblast, main#regions div#header-map h4#currentOblast, main#regions div#header-map-regions h4#currentOblast {
+      font-style: italic;
+      color: grey; }
+  main#country header, main#regions header {
+    margin: 1em 3em; }
+    main#country header h1, main#regions header h1 {
+      margin: 0; }
+    main#country header h3, main#regions header h3 {
+      margin-top: 0.3em;
+      font-weight: unset; }
+  main#country figure, main#regions figure {
+    padding: 0;
+    margin: 0;
+    background-color: #f1f1f1; }
+  main#country div.navigation, main#regions div.navigation {
+    margin-top: 1em; }
+    main#country div.navigation div.directions_title, main#regions div.navigation div.directions_title {
+      margin: 0.5em 0.4em 0 0.8em; }
+      main#country div.navigation div.directions_title i, main#regions div.navigation div.directions_title i {
+        font-size: 0.8em;
+        color: grey; }
+    main#country div.navigation #meta-navigation svg #Layer_1 path, main#country div.navigation #meta-navigation svg text, main#regions div.navigation #meta-navigation svg #Layer_1 path, main#regions div.navigation #meta-navigation svg text {
+      cursor: pointer; }
+    main#country div.navigation div.search, main#regions div.navigation div.search {
+      width: 100%;
+      background-color: #f1f1f1;
+      padding-top: 0.5em;
+      padding-bottom: 0.5em; }
+      main#country div.navigation div.search div.cityName, main#country div.navigation div.search div.cityName-regions, main#regions div.navigation div.search div.cityName, main#regions div.navigation div.search div.cityName-regions {
+        margin: 1em 0.4em 0.5em 0.8em; }
+        main#country div.navigation div.search div.cityName i, main#country div.navigation div.search div.cityName-regions i, main#regions div.navigation div.search div.cityName i, main#regions div.navigation div.search div.cityName-regions i {
+          font-size: 0.8em;
+          color: grey; }
+        main#country div.navigation div.search div.cityName p, main#country div.navigation div.search div.cityName-regions p, main#regions div.navigation div.search div.cityName p, main#regions div.navigation div.search div.cityName-regions p {
+          margin: 0;
+          padding-top: 0.5em; }
+      main#country div.navigation div.search div#bloodhound, main#regions div.navigation div.search div#bloodhound {
+        margin: 1em 0.4em 0.5em 0.4em; }
+      main#country div.navigation div.search .tt-input,
+      main#country div.navigation div.search .tt-hint, main#regions div.navigation div.search .tt-input,
+      main#regions div.navigation div.search .tt-hint {
+        height: 1.5em;
+        padding: 0.4em 0.4em;
+        font-size: 1em;
+        line-height: 1.5em;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+        background-color: #f1f1f1; }
+      main#country div.navigation div.search .tt-input, main#regions div.navigation div.search .tt-input {
+        /* UPDATE: newer versions use tt-input instead of tt-query */
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); }
+      main#country div.navigation div.search .tt-hint, main#regions div.navigation div.search .tt-hint {
+        color: #999; }
+      main#country div.navigation div.search .tt-menu, main#regions div.navigation div.search .tt-menu {
+        /* UPDATE: newer versions use tt-menu instead of tt-dropdown-menu */
+        width: 422px;
+        margin-top: 12px;
+        padding: 8px 0;
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer; }
+      main#country div.navigation div.search .tt-suggestion, main#regions div.navigation div.search .tt-suggestion {
+        padding: 3px 20px;
+        font-size: 1em;
+        line-height: 24px; }
+      main#country div.navigation div.search .tt-suggestion.tt-is-under-cursor, main#regions div.navigation div.search .tt-suggestion.tt-is-under-cursor {
+        /* UPDATE: newer versions use .tt-suggestion.tt-cursor */
+        color: #fff;
+        background-color: #f1f1f1; }
+      main#country div.navigation div.search .tt-suggestion p, main#regions div.navigation div.search .tt-suggestion p {
+        margin: 0; }
+    main#country div.navigation .table, main#country div.navigation .table-region, main#regions div.navigation .table, main#regions div.navigation .table-region {
+      padding-left: 0.5em; }
+      main#country div.navigation .table .route, main#country div.navigation .table-region .route, main#regions div.navigation .table .route, main#regions div.navigation .table-region .route {
+        padding: 0.5em;
+        margin: 0.5em;
+        padding: 0.3em;
+        border: 1px solid #929292; }
+      main#country div.navigation .table p.routeProperty, main#country div.navigation .table-region p.routeProperty, main#regions div.navigation .table p.routeProperty, main#regions div.navigation .table-region p.routeProperty {
+        display: none;
+        font-size: 0.9em;
+        color: grey;
+        margin-left: 1.5em; }
+      main#country div.navigation .table div.cityTitle, main#country div.navigation .table p.routeTitle, main#country div.navigation .table p.routeProperty, main#country div.navigation .table-region div.cityTitle, main#country div.navigation .table-region p.routeTitle, main#country div.navigation .table-region p.routeProperty, main#regions div.navigation .table div.cityTitle, main#regions div.navigation .table p.routeTitle, main#regions div.navigation .table p.routeProperty, main#regions div.navigation .table-region div.cityTitle, main#regions div.navigation .table-region p.routeTitle, main#regions div.navigation .table-region p.routeProperty {
+        cursor: pointer; }
+      main#country div.navigation .table .cityTitle, main#country div.navigation .table-region .cityTitle, main#regions div.navigation .table .cityTitle, main#regions div.navigation .table-region .cityTitle {
+        border: 1px solid #929292;
+        padding: 0.3em;
+        transition: all 1.5s; }
+      main#country div.navigation .table p.routeTitle.open, main#country div.navigation .table-region p.routeTitle.open, main#regions div.navigation .table p.routeTitle.open, main#regions div.navigation .table-region p.routeTitle.open {
+        background-color: #EB00FF;
+        margin-block-start: 0;
+        margin-block-end: 0;
+        color: white; }
+      main#country div.navigation .table p.routeTitle, main#country div.navigation .table-region p.routeTitle, main#regions div.navigation .table p.routeTitle, main#regions div.navigation .table-region p.routeTitle {
+        margin-block-start: 0.5em;
+        margin-block-end: 0.5em;
+        margin-left: 0.4em; }
+      main#country div.navigation .table div.city, main#country div.navigation .table-region div.city, main#regions div.navigation .table div.city, main#regions div.navigation .table-region div.city {
+        padding: 0.3em;
+        border: 1px solid #929292; }
 
-Backtrace:
-style.scss:58
-/usr/lib/ruby/vendor_ruby/sass/script/tree/variable.rb:49:in `_perform'
-/usr/lib/ruby/vendor_ruby/sass/script/tree/node.rb:50:in `perform'
-/usr/lib/ruby/vendor_ruby/sass/script/tree/interpolation.rb:170:in `_perform'
-/usr/lib/ruby/vendor_ruby/sass/script/tree/node.rb:50:in `perform'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:540:in `block in run_interp_no_strip'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:538:in `map'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:538:in `run_interp_no_strip'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:545:in `run_interp'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:510:in `visit_media'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:36:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:158:in `block in visit'
-/usr/lib/ruby/vendor_ruby/sass/stack.rb:79:in `block in with_base'
-/usr/lib/ruby/vendor_ruby/sass/stack.rb:115:in `with_frame'
-/usr/lib/ruby/vendor_ruby/sass/stack.rb:79:in `with_base'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:158:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:431:in `block (2 levels) in visit_rule'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:431:in `map'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:431:in `block in visit_rule'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:179:in `with_environment'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:429:in `visit_rule'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:36:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:158:in `block in visit'
-/usr/lib/ruby/vendor_ruby/sass/stack.rb:79:in `block in with_base'
-/usr/lib/ruby/vendor_ruby/sass/stack.rb:115:in `with_frame'
-/usr/lib/ruby/vendor_ruby/sass/stack.rb:79:in `with_base'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:158:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:52:in `block in visit_children'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:52:in `map'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:52:in `visit_children'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:167:in `block in visit_children'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:179:in `with_environment'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:166:in `visit_children'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:36:in `block in visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:186:in `visit_root'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:36:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:157:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:8:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/root_node.rb:36:in `css_tree'
-/usr/lib/ruby/vendor_ruby/sass/tree/root_node.rb:29:in `render_with_sourcemap'
-/usr/lib/ruby/vendor_ruby/sass/engine.rb:378:in `_render_with_sourcemap'
-/usr/lib/ruby/vendor_ruby/sass/engine.rb:295:in `render_with_sourcemap'
-/usr/lib/ruby/vendor_ruby/sass/plugin/compiler.rb:490:in `update_stylesheet'
-/usr/lib/ruby/vendor_ruby/sass/plugin/compiler.rb:215:in `block in update_stylesheets'
-/usr/lib/ruby/vendor_ruby/sass/plugin/compiler.rb:209:in `each'
-/usr/lib/ruby/vendor_ruby/sass/plugin/compiler.rb:209:in `update_stylesheets'
-/usr/lib/ruby/vendor_ruby/sass/plugin.rb:82:in `update_stylesheets'
-/usr/lib/ruby/vendor_ruby/sass/exec/sass_scss.rb:359:in `watch_or_update'
-/usr/lib/ruby/vendor_ruby/sass/exec/sass_scss.rb:51:in `process_result'
-/usr/lib/ruby/vendor_ruby/sass/exec/base.rb:52:in `parse'
-/usr/lib/ruby/vendor_ruby/sass/exec/base.rb:19:in `parse!'
-/usr/bin/scss:8:in `<main>'
-*/
-body:before {
-  white-space: pre;
-  font-family: monospace;
-  content: "Error: Undefined variable: \"$break-large\".\A         on line 58 of style.scss\A \A 53: main#country, main#regions {\A 54:   //height: 90vh;\A 55:   display: grid;\A 56:   grid-template-columns: 5fr 2fr;\A 57: \A 58:   @media #{$break-large} {\A 59:       display: grid;\A 60:       grid-template-columns: 5fr 1fr;\A 61:   }\A 62: \A 63:   @media #{$mobile} {"; }
+article {
+  display: grid;
+  grid-template-columns: 1fr; }
+
+.read {
+  margin: 3em 1em 0 1em; }
+  .read h3 {
+    color: #EB00FF;
+    font-weight: 400;
+    margin: 0; }
+    .read h3.upper {
+      text-transform: uppercase;
+      font-weight: 500; }
+  .read p {
+    margin: 0 0 1.5em 0; }
+  .read p:first-of-type {
+    margin-top: 1em; }
+  .read a {
+    text-decoration: none;
+    color: #EB00FF;
+    font-weight: 400; }
+  @media screen and (min-width: 577px) {
+    .read {
+      margin: 4em 7.5% 0 7.5%; } }
+  @media screen and (min-width: 950px) {
+    .read {
+      margin: 4em 20% 0 20%; } }
+  @media screen and (min-width: 1400px) {
+    .read {
+      margin: 4em 25% 0 25%; } }
+
+footer #read_more {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin: 4em 3em 2em 3em;
+  grid-gap: 3em; }
+
+@media screen and (max-width: 577px) {
+  footer #read_more {
+    grid-template-columns: 1fr; } }
+footer #read_more h3 {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 1.25em; }
+
+footer #read_more img {
+  max-width: 100%; }
+
+footer #donate {
+  margin: 4em 1em 4em 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  align-content: center; }
+
+footer #donate h5 {
+  font-size: 1rem;
+  text-align: center; }
+
+@media screen and (min-width: 577px) {
+  footer #donate {
+    margin: 4em 15% 4em 15%; }
+
+  footer #donate h5 {
+    font-size: 1.25em;
+    max-width: 40em; } }
+footer #donate a {
+  background-color: #ffc423;
+  padding: 10px;
+  outline: none;
+  border: none;
+  font-weight: 800;
+  font-size: 18px;
+  font-family: Verdana, Arial, sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: all 1s; }
+
+footer #created_texty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+  margin: 4em 15% 4em 15%; }
+
+footer #created_texty i {
+  box-sizing: content-box;
+  margin: 0.5em;
+  cursor: pointer;
+  width: 1em;
+  height: 1em;
+  border: 1px solid #8d8d8d;
+  color: #8d8d8d;
+  border-radius: 50%;
+  padding: 0.5em;
+  font-size: 2.5em;
+  line-height: 1;
+  transition: all 0.5s; }
+
+footer #created_texty i:hover {
+  border: 1px solid #333333;
+  color: #333333; }
+
+footer #created_texty img {
+  max-height: 4em;
+  max-width: 90%; }
+
+footer #created_texty div {
+  text-align: center; }
+
+footer #created_texty h3 {
+  text-align: center;
+  font-size: 1.5rem; }
+
+.tippy-popper div.tippy-tooltip {
+  color: #0d0d0d;
+  font-size: 1rem;
+  padding: 0.75em !important;
+  box-shadow: 0 0 0.5em 1px #e6e6e6;
+  margin: 0 -5% 0 0; }
+
+.tippy-popper .tippy-backdrop {
+  background-color: #fff;
+  opacity: 0.85; }
+
+.tippy-popper h5 {
+  margin: 0 0 0.5em 0;
+  padding: 0 0 0 0;
+  font-size: 1em;
+  text-align: left; }
+
+@media screen and (min-width: 577px) {
+  .tippy-popper h5 {
+    font-size: 0.85rem; } }
+.tippy-popper p {
+  margin: 0 0 0.5em 0;
+  padding: 0 0 0 0;
+  text-align: left; }
+
+section#partners {
+  margin-top: 4em;
+  margin-bottom: 1em;
+  background-color: #ffff;
+  grid-column: 1/3;
+  display: grid;
+  grid-template-columns: auto 220px 80px 190px 220px 120px 220px auto;
+  /*grid-template-columns: auto auto auto auto auto auto auto auto;*/ }
+  section#partners div.partner {
+    width: 100%;
+    height: 30px; }
+  section#partners #partner3, section#partners #partner4 {
+    margin-top: 5px; }
+  section#partners #partner6 {
+    width: 90% !important;
+    margin-top: 10px !important; }
+
+/*# sourceMappingURL=style.css.map */
