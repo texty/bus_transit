@@ -163,7 +163,7 @@ var country = (function(){
 
         oblastBoundaries.bringToBack();
 
-        map.fitBounds(oblastBoundaries.getBounds());
+        // map.fitBounds(markers.getBounds());
 
 
         $('#map').css('position', 'sticky');

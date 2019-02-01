@@ -16,6 +16,11 @@ $mobile: ' screen and (max-width: 577px)';
 
 body {
   font-family: sans-serif;
+  font-size: 16px;
+  font-weight: 100;
+  margin: 0 auto 15px auto;
+  line-height: 1.6;
+
   color: $fontcol;
   background: $bgcol;
   margin: 0;
@@ -29,6 +34,10 @@ body {
   //.leaflet-popup-content {
   //  margin: 0.6em;
   //}
+
+  a {
+    cursor: pointer;
+  }
 
   div.buttons {
     margin-left: 0.6em;
@@ -282,7 +291,7 @@ article {
   h3 {
     color: $accentcolorange;
     font-weight: 400;
-    margin: 0;
+    margin-bottom: 1em;
 
     &.upper {
       text-transform: uppercase;
@@ -291,7 +300,11 @@ article {
   }
 
   p {
-    margin: 0 0 1.5em 0;
+    //margin: 0 0 1.5em 0;
+    font-size: 16px;
+    font-weight: 100;
+    margin: 0 auto 15px auto;
+    line-height: 1.6;
   }
 
   p:first-of-type {
