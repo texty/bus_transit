@@ -3,43 +3,90 @@ var country = (function(){
     var module = {};
 
     module.draw = function(basic, coords, oblastData) {
+        /*
+         * Turns a single edge into several segments that can
+         * be used for simple edge bundling.
+         */
+        function generateSegments(nodes, links) {
+            // calculate distance between two nodes
+            var distance = function(source, target) {
+                // sqrt( (x2 - x1)^2 + (y2 - y1)^2 )
+                var dx2 = Math.pow(target.x - source.x, 2);
+                var dy2 = Math.pow(target.y - source.y, 2);
+                return Math.sqrt(dx2 + dy2);
+            };
+            // max distance any two nodes can be apart is the hypotenuse!
+            debugger;
+            var hypotenuse = Math.sqrt(width * width + height * height);
+            // number of inner nodes depends on how far nodes are apart
+            var inner = d3.scaleLinear()
+                .domain([0, hypotenuse])
+                .range([1, 15]);
+            // generate separate graph for edge bundling
+            // nodes: all nodes including control nodes
+            // links: all individual segments (source to target)
+            // paths: all segments combined into single path for drawing
+            var bundle = {nodes: [], links: [], paths: []};
+            // make existing nodes fixed
+            bundle.nodes = nodes.map(function(d, i) {
+                d.fx = d.x;
+                d.fy = d.y;
+                return d;
+            });
+            links.forEach(function(d, i) {
+                // calculate the distance between the source and target
+                var length = distance(d.source, d.target);
+                // calculate total number of inner nodes for this link
+                var total = Math.round(inner(length));
+                // create scales from source to target
+                var xscale = d3.scaleLinear()
+                    .domain([0, total + 1]) // source, inner nodes, target
+                    .range([d.source.x, d.target.x]);
+                var yscale = d3.scaleLinear()
+                    .domain([0, total + 1])
+                    .range([d.source.y, d.target.y]);
+                // initialize source node
+                var source = d.source;
+                var target = null;
+                // add all points to local path
+                var local = [source];
+                for (var j = 1; j <= total; j++) {
+                    // calculate target node
+                    target = {
+                        x: xscale(j),
+                        y: yscale(j)
+                    };
+                    local.push(target);
+                    bundle.nodes.push(target);
+                    bundle.links.push({
+                        source: source,
+                        target: target
+                    });
+                    source = target;
+                }
+                local.push(d.target);
+                // add last link to target node
+                bundle.links.push({
+                    source: target,
+                    target: d.target
+                });
+                bundle.paths.push(local);
+            });
+            return bundle;
+        }
 
+
+        var width = document.getElementById('map').offsetWidth;
+        var height = document.getElementById('map').offsetHeight;
+
+        //color for lines on map
         var backgroundRouteColor = '#b7acac';
         var selectedRouteColor = "#EB00FF";
 
+        //get only interregional march routes
         var names = basic.filter(function(d) {return d.regulative_institution == "Україна"});
 
-        // var oblast_map = {
-        //     "ВЛ": {'name':'Волинська область', 'city': 'Луцьк', 'status': true},
-        //     "ІФ": {'name':"Івано-Франківська область", 'city': 'Івано-Франківськ', 'status': true},
-        //     "ХМ": {'name':"Хмельницька область", 'city': 'Хмельницький', 'status': false},
-        //     "ЗК": {'name':"Закарпатська область", 'city': 'Ужгород', 'status': false},
-        //     "КВ": {'name':"Київська область", 'city': 'Київ', 'status': false},
-        //     "РВ": {'name':"Рівненська область", 'city': 'Рівне', 'status': true},
-        //     "ЛВ": {'name':"Львівська область", 'city': 'Львів', 'status': false},
-        //     "ТР": {'name':"Тернопільська область", 'city': 'Тернопіль', 'status': false},
-        //     "СМ": {'name':"Сумська область", 'city': 'Суми', 'status': true},
-        //     "ЧГ": {'name':"Чернігівська область", 'city': 'Чернігів', 'status': true},
-        //     "ДН": {'name':"Дніпропетровська область", 'city': 'Дніпропетровськ', 'status': false},
-        //     "ДО": {'name':"Донецька область", 'city': 'Краматорськ', 'status': true},
-        //     "ЗП": {'name':"Запорізька область", 'city': 'Запоріжжя', 'status': true},
-        //     "ХР": {'name':"Херсонська область", 'city': 'Херсон', 'status': true},
-        //     "ОД": {'name':"Одеська область", 'city': 'Одеса', 'status': true},
-        //     "ЧН": {'name':"Чернівецька область", 'city': 'Чернівці', 'status': false},
-        //     "КР": {'name':"Автономна республіка Крим", 'city': 'Севастополь', 'status': false},
-        //     "ЖТ": {'name':"Житомирська область", 'city': 'Житомир', 'status': true},
-        //     "ПЛ": {'name':"Полтавська область", 'city': 'Полтава', 'status': true},
-        //     "ХК": {'name':"Харківська область", 'city': 'Харків', 'status': false},
-        //     "ЛГ": {'name':"Луганська область", 'city': 'Сєвєродонецьк', 'status': true},
-        //     "ЧК": {'name':"Черкаська область", 'city': 'Черкаси', 'status': true},
-        //     "КГ": {'name':"Кіровоградська область", 'city': 'Кіровоград', 'status': true},
-        //     "МК": {'name':"Миколаївська область", 'city': 'Миколаїв', 'status': true},
-        //     "ВН": {'name':"Вінницька область", 'city': 'Вінниця', 'status': false}
-        // };
-
-
-
-
+        // counted number of marchroutes departing from each city
         var cityNamesForCount = basic.map(d => d.first);
         var aCount = new Map([...new Set(cityNamesForCount)].map(
             x => [x, cityNamesForCount.filter(y => y === x).length]
@@ -60,14 +107,15 @@ var country = (function(){
         });
 
 
+        // nested coodinates for each city
         var nested_data = d3.nest()
             .key(function (d) {
                 return d.new_name.trim();
             })
             .map(coords);
 
-        names.forEach(function (d, i) {
 
+        names.forEach(function (d, i) {
                 if (nested_data['$' + d.first.trim()] != undefined && nested_data['$' + d.second.trim()] != undefined) {
                     names[i].coords = [[+nested_data['$' + d.first.trim()][0].Lat, +nested_data['$' + d.first.trim()][0].Long], [+nested_data['$' + d.second.trim()][0].Lat, +nested_data['$' + d.second.trim()][0].Long]]
                 }
@@ -167,13 +215,13 @@ var country = (function(){
 
 
         $('#map').css('position', 'sticky');
-
-        var gl = L.mapboxGL({
-            accessToken: 'pk.eyJ1IjoiZHJpbWFjdXMxODIiLCJhIjoiWGQ5TFJuayJ9.6sQHpjf_UDLXtEsz8MnjXw',
-            maxZoom: 9,
-            minZoom: 6,
-            style: 'country.json'
-        }).addTo(map);
+        //
+        // var gl = L.mapboxGL({
+        //     accessToken: 'pk.eyJ1IjoiZHJpbWFjdXMxODIiLCJhIjoiWGQ5TFJuayJ9.6sQHpjf_UDLXtEsz8MnjXw',
+        //     maxZoom: 9,
+        //     minZoom: 6,
+        //     style: 'country.json'
+        // }).addTo(map);
 
 
 
@@ -293,6 +341,96 @@ var country = (function(){
                         return colour;
                     };
 
+                    coords.forEach(function(d){
+                        var coords = project([+d.Lat, +d.Long], zoom);
+                        d.x = coords.x;
+                        d.y = coords.y;
+                    });
+
+                    var city_by_name = d3.map(coords, d => d.new_name);
+                    console.log(city_by_name);
+
+                    lineCoord.forEach(function (d) {
+                        d.source = city_by_name.get(d.departure);
+                        d.target = city_by_name.get(d.arrival);
+                    });
+
+
+
+                    console.log(lineCoord);
+
+                    var bundle = generateSegments(coords, lineCoord);
+
+                    console.log("bundle");
+                    console.log(bundle);
+
+                    // https://github.com/d3/d3-shape#curveBundle
+                    var line = d3.line()
+                        .curve(d3.curveBundle.beta(0.95))
+                        .x(function(d) { return d.x; })
+                        .y(function(d) { return d.y; });
+
+                    // var links = plot.append("g").attr("id", "flights")
+                    //     .selectAll("path.flight")
+                    //     .data(bundle.paths)
+                    //     .enter()
+                    //     .append("path")
+                    //     .attr("d", line)
+                    //     .style("fill", "none")
+                    //     .style("stroke", "#252525")
+                    //     .style("stroke-width", 0.5)
+                    //     .style("stroke-opacity", 0.2);
+                    // https://github.com/d3/d3-force
+
+                    var radius = {min: 6, max: 12};
+
+
+                    var layout = d3.forceSimulation()
+                    // settle at a layout faster
+                        .alphaDecay(0.1)
+                        // nearby nodes attract each other
+                        .force("charge", d3.forceManyBody()
+                            .strength(10)
+                            .distanceMax(radius.max * 2)
+                        )
+                        // edges want to be as short as possible
+                        // prevents too much stretching
+                        .force("link", d3.forceLink()
+                            .strength(0.8)
+                            .distance(0)
+                        )
+                        .on("tick", function(d) {
+                            console.log('tick')
+//                    links.attr("d", line);
+                        })
+                        .on("end", function(d) {
+                            console.log("Layout complete!");
+                            // links.attr("d", line);
+                            console.log(d);
+                        });
+                    layout.nodes(bundle.nodes).force("link").links(bundle.links);
+                    // draw airports
+
+                    // var scale = d3.scaleSqrt()
+                    //     .domain(d3.extent(airports, function(d) { return d.degree; }))
+                    //     .range([radius.min, radius.max]);
+                    // plot.append("g").attr("id", "airports")
+                    //     .selectAll("circle.airport")
+                    //     .data(airports)
+                    //     .enter()
+                    //     .append("circle")
+                    //     .attr("r", function(d) { return 2; })
+                    //     .attr("cx", function(d) { return d.x; })
+                    //     .attr("cy", function(d) { return d.y; })
+                    //     .style("fill", "white")
+                    //     .style("opacity", 0.6)
+                    //     .style("stroke", "#252525")
+                    //     .on("mouseover", onMouseOver)
+                    //     .on("mousemove", onMouseMove)
+                    //     .on("mouseout", onMouseOut);
+
+
+
 
                     lineCoord.forEach(function (d) {
 
@@ -319,6 +457,7 @@ var country = (function(){
                         container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
                         //
                         container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
+
                         // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
 
 
@@ -431,7 +570,7 @@ var country = (function(){
                                     // container.beginFill(0xFF3300);
                                     container.lineStyle((2 / scale), selectedRouteColor.replace('#', '0x'), 1);
 
-                                    var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
+                                    // var distance = turf.distance(turf.point(d.coords[0]), turf.point(d.coords[1]));
                                     var num = Math.random(0,10); // this will get a number between 1 and 99;
 
                                     num = (distance/1000)*num;
@@ -441,14 +580,98 @@ var country = (function(){
                                     midPoint = [midPoint[0]+num, midPoint[1]+num];
                                     //
                                     // // draw a shape
-                                    container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
+                                    // container.moveTo(project(d.coords[0]).x, project(d.coords[0]).y);
+
+
+                                    // var distance = function(source, target) {
+                                    //     // sqrt( (x2 - x1)^2 + (y2 - y1)^2 )
+                                    //     var dx2 = Math.pow(target.x - source.x, 2);
+                                    //     var dy2 = Math.pow(target.y - source.y, 2);
+                                    //     return Math.sqrt(dx2 + dy2);
+                                    // };
                                     //
-                                    container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
+                                    // var hypotenuse = Math.sqrt(width * width + height * height);
+                                    //
+                                    // var inner = d3.scaleLinear()
+                                    //     .domain([0, hypotenuse])
+                                    //     .range([1, 15]);
+                                    //
+                                    // var line = d3.line()
+                                    //     .x(function(dd) { return dd.x; })
+                                    //     .y(function(dd) { return dd.y; })
+                                    //     .curve(d3.curveStep)
+                                    //     .context(container);
+                                    //
+                                    // line([project(d.coords[0]), project(d.coords[1])]);
+
+
+                                    ////////////////////////////////////////////////////////////////
+
+
+                                    var distance = function(source, target) {
+                                        // sqrt( (x2 - x1)^2 + (y2 - y1)^2 )
+                                        var dx2 = Math.pow(target.x - source.x, 2);
+                                        var dy2 = Math.pow(target.y - source.y, 2);
+                                        return Math.sqrt(dx2 + dy2);
+                                    };
+
+                                    var hypotenuse = Math.sqrt(width * width + height * height);
+
+                                    var inner = d3.scaleLinear()
+                                        .domain([0, hypotenuse])
+                                        .range([1, 15]);
+
+                                    var line = d3.line()
+                                        .x(function(dd) { return dd.x; })
+                                        .y(function(dd) { return dd.y; })
+                                        .curve(d3.curveLinear)
+                                        // .curve(d3.curveStep)
+                                        .context(container);
+
+                                    var length = distance(project(d.coords[0]), project(d.coords[1]));
+                                    // calculate total number of inner nodes for this link
+                                    var total = Math.round(inner(length));
+                                    // create scales from source to target
+                                    var xscale = d3.scaleLinear()
+                                        .domain([0, total + 1]) // source, inner nodes, target
+                                        .range([project(d.coords[0]).x, project(d.coords[1]).x]);
+                                    var yscale = d3.scaleLinear()
+                                        .domain([0, total + 1])
+                                        .range([project(d.coords[0]).y, project(d.coords[1]).y]);
+
+
+                                    // line([project(d.coords[0]), project(d.coords[1])]);
+
+                                    var points = [project(d.coords[0]), project(d.coords[1])];
+
+                                    var currentPosition = project(d.coords[1]);
+
+                                    for (var j = 1; j <= total; j++) {
+                                        // calculate target node
+                                        var extra = {
+                                            x: xscale(j),
+                                            y: yscale(j)
+                                        };
+
+                                        points.push(extra);
+
+                                        // line([currentPosition, extra]);
+                                        //
+                                        // currentPosition = extra
+                                    }
+
+                                    line(points);
+                                    
+                                    //
+                                    //container.quadraticCurveTo(project(midPoint).x, project(midPoint).y, project(d.coords[1]).x, project(d.coords[1]).y);
+
                                     // container.lineTo(project(d.coords[1]).x, project(d.coords[1]).y);
-
-
                                 }
+                                
+
                             });
+
+
 
                             var march_route_list = nested_names['$' + selectedCity.feature[0].first.trim()][0];
 
@@ -823,3 +1046,68 @@ var country = (function(){
 
     return module;
 })();
+
+
+
+function drawData(airports, flights) {
+    // setup and start edge bundling
+    var bundle = generateSegments(airports, flights);
+    // https://github.com/d3/d3-shape#curveBundle
+    var line = d3.line()
+        .curve(d3.curveBundle.beta(0.95))
+        .x(function(d) { return d.x; })
+        .y(function(d) { return d.y; });
+    var links = plot.append("g").attr("id", "flights")
+        .selectAll("path.flight")
+        .data(bundle.paths)
+        .enter()
+        .append("path")
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", "#252525")
+        .style("stroke-width", 0.5)
+        .style("stroke-opacity", 0.2);
+    // https://github.com/d3/d3-force
+    var layout = d3.forceSimulation()
+    // settle at a layout faster
+        .alphaDecay(0.1)
+        // nearby nodes attract each other
+        .force("charge", d3.forceManyBody()
+            .strength(10)
+            .distanceMax(radius.max * 2)
+        )
+        // edges want to be as short as possible
+        // prevents too much stretching
+        .force("link", d3.forceLink()
+            .strength(0.8)
+            .distance(0)
+        )
+        .on("tick", function(d) {
+            console.log('tick')
+//                    links.attr("d", line);
+        })
+        .on("end", function(d) {
+            console.log("Layout complete!");
+            links.attr("d", line);
+            console.log(d);
+        });
+    layout.nodes(bundle.nodes).force("link").links(bundle.links);
+    // draw airports
+    var scale = d3.scaleSqrt()
+        .domain(d3.extent(airports, function(d) { return d.degree; }))
+        .range([radius.min, radius.max]);
+    plot.append("g").attr("id", "airports")
+        .selectAll("circle.airport")
+        .data(airports)
+        .enter()
+        .append("circle")
+        .attr("r", function(d) { return 2; })
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; })
+        .style("fill", "white")
+        .style("opacity", 0.6)
+        .style("stroke", "#252525")
+        .on("mouseover", onMouseOver)
+        .on("mousemove", onMouseMove)
+        .on("mouseout", onMouseOut);
+}
