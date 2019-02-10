@@ -541,16 +541,23 @@ var country = (function(){
 
                     });
 
+                    var popup;
+
                     markers.on('mouseover', d => {
                         d.layer.setStyle({fillColor: selectedRouteColor});
-                        var popup = L.popup()
+                        popup = L.popup()
                             .setLatLng(d.latlng)
                             .setContent(d.layer.feature.properties.new_name)
                             .openOn(map);
 
                     });
+
+
                     markers.on('mouseout', d => {
                         d.layer.setStyle({fillColor: "#929292"});
+
+                        map.closePopup();
+
                     });
 
                     map.on('click', function (d) {

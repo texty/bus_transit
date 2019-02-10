@@ -170,6 +170,8 @@ article {
     font-weight: 100;
     margin: 0 auto 15px auto;
     line-height: 1.6; }
+  .read li {
+    margin-left: 1em; }
   .read p:first-of-type {
     margin-top: 1em; }
   .read a {

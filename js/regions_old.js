@@ -706,6 +706,8 @@ var regions = (function(){
                     });
                     markers.on('mouseout', d => {
                         d.layer.setStyle({fillColor: "#929292"});
+
+                        map.closePopup();
                     });
 
                     map.on('click', function (d) {
