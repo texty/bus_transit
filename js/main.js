@@ -22,19 +22,20 @@ d3.csv('data/final_data_full_5.csv')
 
 
                         $('.regions-button').on('click', function () {
-                            $('main#country').hide();
-                            $('main#regions').show();
+                            // $('.country-button').css("background-color", 'lightgray');
+                            // $('.regions-button').css("background-color", 'gray');
 
 
-                            $('.country-button').css("background-color", 'lightgray');
-                            $('.regions-button').css("background-color", 'gray');
+                            alert('work in progress')
+ 
+                            // $('main#country').hide();
+                            // $('main#regions').show();
 
-
-                            d3.selectAll('.st1.st2.st3').nodes().forEach(function (d) {
-                                if (d.innerHTML == 'ЧГ') {
-                                    $(d).click()
-                                }
-                            });
+                            // d3.selectAll('.st1.st2.st3').nodes().forEach(function (d) {
+                            //     if (d.innerHTML == 'ЧГ') {
+                            //         $(d).click()
+                            //     }
+                            // });
 
                         });
                         $('.country-button').on('click', function () {

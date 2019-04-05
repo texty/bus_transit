@@ -81,7 +81,8 @@ main#country, main#regions {
     top: 0;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    // grid-template-rows: auto 1fr;
+    grid-template-rows: 1fr;
 
     div#oblastName {
       position: absolute;
