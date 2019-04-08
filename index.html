@@ -1,320 +1,117 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Bus Transit</title>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-
-
-    <link rel="stylesheet" href="css/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
-
-    <script src="lib/pixi.js"></script>
-    <script src="lib/L.PixiOverlay.js"></script>
-
-    <!--mapbox-leaflet gl-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!-- <link rel="icon" href="%= BASE_URL %>favicon.icon"> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+    crossorigin=""/>
+    <link rel="stylesheet" href="css/main.css">
     <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.css" rel='stylesheet' />
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
-    <script src="lib/leaflet-mapbox-gl.js"></script>
+    <script src="http://localhost:8098"></script>
+    <title>Мережа автобусних маршрутів</title>
 
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <!--<script src="example.min.js"></script>-->
-    <script src="lib/rbush.js"></script>
-    <script src="lib/turf.min.js"></script>
-    <script src="lib/jquery-3.3.1.js"></script>
-    <script src="lib/typeahead.js"></script>
+    <meta property="og:site_name" content="ТЕКСТИ.ORG.UA"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="Мережа автобусних маршрутів"/>
+    <meta property="og:image" content="http://texty.org.ua/d/2019/bus_network/image/og.jpg"/>
+    <meta property="og:description" content="Інтерактивна карта автобусних маршрутів між містами в Україні та за кордоном"/>
+    <meta property="og:url" content="http://texty.org.ua/d/2019/bus_network/">
+
+    <meta name="twitter:site" content="@textyorgua"/>
+    <meta property="twitter:account_id" content="49572937"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:url" content="http://texty.org.ua/d/2019/bus_network/"/>
+    <meta name="twitter:title" content="Мережа автобусних маршрутів"/>
+    <meta name="twitter:description" content="Інтерактивна карта автобусних маршрутів між містами в Україні та за кордоном"/>
+    <meta name="twitter:image:src" content="http://texty.org.ua/d/2019/bus_network/image/og.jpg"/>
+    <meta name="twitter:image:width" content="1200"/>
+    <meta name="twitter:image:height" content="630"/>
+    <!-- Other Meta Tags -->
+    <meta name="title" content="Мережа автобусних маршрутів">
+    <meta name="description" content="Інтерактивна карта автобусних маршрутів між містами в Україні та за кордоном">
 
 
-
-    <link rel="stylesheet" href="css/style.css">
-    <!--<link rel="stylesheet" href="css/typeahead.css">-->
-
-
-</head>
-<body>
-
-<main id="country">
-    <div id="left">
-        <div id="header-map">
-            <!-- <header>
-                <h1>Наступна зупинка</h1>
-                <h3>Мережа автобусних маршрутів в Україні</h3>
-            </header> -->
-            <figure id="map">
-            </figure>
-        </div>
-
+  </head>
+  <body>
+    <div id="loading">
+      <p>Зечекайте, будь ласка</p>
+      <img src="css/Loading.gif"/>
     </div>
-    <div class="navigation">
-        <!--<div id="meta-navigation">-->
-        <!--</div>-->
-        <div class="buttons">
-            <button class="country-button">Міжрегіональні</button>
-            <button class="regions-button">Міжнародні</button>
+    <section id="main">
+      <figure>
+        <div id="map_cont">
+          <div id="map"></div>
         </div>
-        <div id="nav-map"></div>
-        <div class="search">
-            <div id="bloodhound">
-                <input class="typeahead" type="text" placeholder="Назва міста">
-            </div>
-            <div class="cityName">
-                    <i>
-                    Обране місто:
-                     </i>
-                <br>
-                <b><p></p></b>
-            </div>
+      </figure>
+      <div id="nav">
+        <div id="bloodhound">
+          <input class="typeahead" type="text" placeholder="Знайти місто">
         </div>
-        <div class="directions_title">
-            <i>
-                Напрямки:
-            </i>
+        <div id="app">
+          <nav id="search_buttons">
+            <button @click="changeToOblast()" :class="{active: screen == 'oblast'}">Обласні</button>
+            <button @click="changeToInternational()" :class="{active: screen == 'internatation'}">Міжнародні</button>
+          </nav>
+          <table>
+            <p id="selected_city">Обране місто: <span>{{ selectedCityName }} </span></p>
+            <!-- <h3></h3> -->
+            <table-route v-for="(name, index) in selectedStop" 
+              v-bind:key="index"
+              :selected.sync="selected"
+              :idx="index"
+              :show="selected == index"
+              :name="name.march_route_name" 
+              :company_name="name.company_name"
+              :license_data="name.license_terms"
+              :bus_age="name.bus_age"
+              :route_regularity="name.march_route_regularity"
+              :bus_comfort_level="name.bus_comfort_level"
+              :id="name.id"
+              :destionation_country_name="name.destionation_country_name"
+              :border_crossing="name.border_crossing"
+            >
+            </table-route> 
+          </table> 
         </div>
-        <div class="table">
-        </div>
-    </div>
-</main>
-
-<main id="regions" style="display: none;">
-    <div id="left-regions">
-        <div id="header-map-regions">
-            <header>
-                <h1>Наступна зупинка</h1>
-                <h3>Мережа автобусних маршрутів в Україні</h3>
-                <h4 id="currentOblast"></h4>
-            </header>
-            <div id="oblastName"></div>
-            <figure id="map-regions">
-            </figure>
-        </div>
-
-    </div>
-    <div class="navigation">
-        <div class="buttons">
-            <button class="country-button">Міжрегіональні</button>
-            <button class="regions-button">Обласні</button>
-        </div>
-        <div style="width:100%" id="map-parent">
-            <div style="width:80%" id="meta-navigation">
-            </div>
-        </div>
-        <div id="nav-map regions"></div>
-        <div class="search">
-            <div id="bloodhound-regions">
-                <input class="typeahead-regions" type="text" placeholder="Назва міста">
-            </div>
-            <div class="cityName-regions">
-                <i>
-                    Обране місто:
-                </i>
-                <br>
-                <b><p></p></b>
-            </div>
-        </div>
-        <div class="directions_title">
-            <i>
-                Напрямки:
-            </i>
-        </div>
-        <div class="table-region"></div>
-    </div>
-
-    </div>
-</main>
-
-<!-- <article id="text">
-    <section class="read">
-
-        <p>Міжміські автобуси — це щоденна реальність для <a href="https://regulation.gov.ua/market/id363/statistics">мільйонів людей в Україні</a>.
-            <a href="https://regulation.gov.ua/market/id363/statistics"></a> Щороку вони перевозять понад
-            100 мільйонів пасажирів. Часто це єдиний чи найзручніший спосіб сполучення між містами і
-            селами, та головний засіб для маятникової міграції (явище, коли люди з передмість їдуть до
-            великого міста працювати, а ввечері повертаються додому).
-
-        </p>
-
-        <p>У сфері автобусних перевезень працює близько 20 тисяч компаній, більшість з них приватні,
-            серед них як і великі компанії з автопарком на сотні автобусів, так і маленькі підприємці
-            з 3-5 одиницями авто.
-
-        </p>
-
-        <p>На головній карті показано міжрегіональні маршрути, тобто ті, що виходять за межі області. Ті, що не виходять за неї, ми показали на окремій карті. Щоб перейти до них, натискайте на кнопку «Обласні» у правому верхньому куті екрана. Під кнопками відкривається додаткова навігація у вигляді карти областей - для того, щоб ви могли перемикатися між різними областями. Натискайте на область, що вас цікавить, - інформація оновиться. Області, по яких ми маємо дані, підписані скороченнями (ВЛ — це Волинська, а ЧГ — Чернігівська область).
-        </p>
-
-
-        <p>Донедавна держава мало втручалась в те, що  відбувається на ринку
-            автобусних перевезень, за словами міністра Інфраструктури щойменше
-            30-40% перевезень знаходяться в
-            <a href="https://hromadske.ua/posts/rinok-avtobusnih-perevezen-v-ukrayini-na-30-40-nelegalnij-mininfrastrukturi">тіні</a>.
-            Однак в останні роки ситуація почала змінюватися. Міністерство інфраструктури'
-            та Державна служба України з безпеки на транспорті почало працювати над тим,
-            щоб оновити автопарк,  стимулювати компанії до конкуренції за маршрути,
-            і найголовніше, підвищити рівень безпеки на дорозі.
-        </p>
-
-        <p>Ми створили цю карту для того щоб зібрати в одному інструменту всю важливу інформацію про автобусні маршрути. Вона показує те, як з’єднані між собою різні міста України автобусним транспортом і хто цей зв’язок забезпечує. Карта дозволяє подивитися “зверху” поєднуючи дані з багатьох різних маршрутів одночасно.
-        </p>
-
-        <p>Наші користувачів, вперше зможуть побачити з якими містами з’єднане їх рідне місто. А також, де працює конкретний перевізник. Ця інформація в першу чергу буде корисна бізнесу та владі для того, щоб планувати нові маршрути та вирішувати проблеми існуючих.</p>
-
-
-        <h3>Хто отримає користь від інструменту?
-        </h3>
-
-        <p>Урядовці зможуть побачити території з поганим транспортним сполученням, з’ясувати, хто має монополії на ринку перевезень, та знайти безвідповідальних перевізників. Вся інформація доступна в зручній графічній формі.
-        </p>
-
-        <p>Бізнесу наш проект дозволить проаналізувати поточну ситуацію на ринку перевезень та визначити перспективні напрямки для інвестицій та розвитку (отримання ліцензій на маршрутах).
-        </p>
-
-        <p>Пасажири зможуть побачити, хто саме обслуговує їхній маршрут, і яким автопарком володіє перевізник. Вони також дізнаються про власників ліцензії на перевезення та термін дії ліцензії. Керуючись міркуваннями безпеки та законності, громадяни можуть у співпраці з місцевою владою наполягати на здійсненні перевезень добросовісними компаніями, які отримали усі необхідні документи та мають якісні транспортні засоби.
-        </p>
-
-
-        <h3>Які дані використовували
-        </h3>
-
-        <p>Відкриті дані — це інформація, яку використовують органи влади і яку вони за законом зобов’язані регулярно оприлюднювати на веб-порталі data.gov.ua. Її може будь-хто безкоштовно отримувати, використовувати та поширювати. Найважливішими відкритими даними у транспорті є інформація про компанії, що працюють на ринку та те де вони працюють.
-        </p>
-
-        <p>Завдяки відкритим даним, ми можемо дізнатися, хто з офіційних перевізників, що мають ліцензії, працюють на маршрутах, оцінити розгалуженість маршрутів у різних регіонах, які автобуси зустрічаються на дорогах, рівень конкуренції/монополізації на маршрутах та коли очікується новий конкурс щодо перевезень.
-        </p>
-
-        <p> Це дозволить і приватним компаніям і чиновникам краще планувати автобусне сполучення, громаді - ініціювати нові рейси та контролювати законність існуючих перевезень. Усе це робить ринок більш прозорим, що допомагає боротися з корупцією та захищати безпеку і комфорт пасажирів.
-        </p>
-
-        <p>Ми проаналізували відкриті дані Державної служби України з безпеки на транспорті., а саме:
-        </p>
-
-        <li><a href="https://data.gov.ua/dataset/1b428b3e-d613-43a2-9781-94c26959db06">дані</a> щодо мережі міжобласних автобусних маршрутів
-            загального користування;
-        </li>
-
-        <li><a href="https://data.gov.ua/dataset/9b29b699-a1cc-462e-bb20-5998607c182f">перелік</a> ліцензій на перевезення пасажирів;
-        </li>
-
-        <li> <a href="https://data.gov.ua/dataset/9b95e684-aa41-4808-9ea5-82fbaf82ee61">дані</a> про транспортні засоби, що використовують для перевезень.
-        </li>
-
-        <h3>Погано везуть. Що може зробити пасажир?
-        </h3>
-
-        <p>Насамперед, перевірити, чи у перевізника є ліцензія. Можливо ви сіли у нелегальний автобус. Як це можна визначити? За сукупністю таких ознак:
-        </p>
-
-        <li>транспорт  вирушає з «народної» зупинки, а не з автостанції;</li>
-
-        <li>бусик тісний і схоже, що  перероблений з вантажного авто — часто для цього використовують Mercedes Sprinter;</li>
-
-        <li>пасажиру не видають квитки, навіть якщо його попросити.
-        </li>
-
-        <p>Чим це погано? Водій не проходить медогляду перед виходом на маршрут, якщо йому стане кепсько за кермом — це його проблема і клопіт пасажирів. Ніхто не оглядає й автобус: він може зламатися в дорозі через зношеність частин,  наприклад лопнути диск.
-        </p>
-
-        <p>На нашій карті ви можете перевірити: які автобусні маршрути є в місті, які компанії їх обслуговують та коли у них закінчується ліцензія. Ви не задоволені перевізником? Дізнайтеся, що це за людина чи компанія. Подивіться на карті де ще він працює, коли у нього закінчується ліцензія на ваш маршрут.
-        </p>
-
-        <p>Якщо проблема застала вас у транспорті ви можете перевірити перевізника за номером автобуса на <a href="https://e-services.dsbt.gov.ua/#/">сайті</a> або в месенджері через сервіс <a href="https://opendatabot.ua/">OpenDataBot</a>.
-        </p>
-
-        <p>На поганого перевізника можна поскаржитися до Укртрансбезпеки. Пишіть листа за адресою:
-            contact@dsbt.gov.ua, вказавши назву і номер маршруту, назву перевізника та порушення.
-            На підставі скарги можливе проведення позачергової перевірки, за результатом якої може бути
-            накладений штраф чи навіть позбавлення ліцензії перевізника.
-            Поради щодо оформлення скарги читайте <a href="https://cedem.org.ua/consultations/yak-napysaty-skargu/">тут</a>.
-        </p>
-
-        <p>Вимагайте від місцевої влади провести відкритий і прозорий конкурс про призначення маршруту коли закінчиться поточна ліцензія. І не просто вимагайте, а контролюйте самі. Приходьте на засідання, знімайте процес, слідкуйте за пропозиціями учасників та повідомляйте про корупцію.
-        </p>
-
-        <h3>Як користуватися картою:
-        </h3>
-
-        <p>
-            Кожна лінія на карті — це один маршрут, а точками показано міста, де він починається та закінчується. Що більша точка, то більше маршрутів виходять із неї. На першій карті (“Міжрегіональні”) ми показали міжрегіональні маршрути, тобто ті, що виходять за межі області. Маршрути всередині області  (“Обласні”) ми показали на окремій карті.
-        </p>
-
-        <li>Ви можете скористатися пошуком, щоб знайти місто, яке вас цікавить, або вибрати його прямо на карті.</li>
-
-        <li>Після того, як ви оберете місто, на карті підсвітяться всі маршрути, які з нього починаються, а праворуч відкриється список.</li>
-
-        <li>Натискайте на маршрути зі списку, щоб побачити деталі: перевізника, рівень комфортності, вік автобусів та частоту поїздок. Ви також можете натиснути на назву перевізника й побачити всі маршрути, які він обслуговує.</li>
-
-        <li>Щоб перейти до маршрутів всередині області, натискайте на кнопку «Обласні» у правому верхньому куті екрана.</li>
-
-        <li>Під кнопками відкриється додаткова навігація у вигляді схеми областей. Натискайте на область, яка вас цікавить, щоб дізнатися наявні маршрути та інформацію по ним. Області, по яким у нас є дані, підписані скороченнями (ВЛ — це Волинська, а ЧГ — Чернігівська область).</li>
-
-
-        <h3>Що ми дізналися  з даних?
-        </h3>
-
-
-        <p>Середній вік автобусів на маршрутах — майже 16 років. Є й такі, що працюють ще з кінця 1970-х. Найстарший автобус ходить на рейсі Ковель-Київ. Він був випущений у 1977 році.</p>
-
-        <p>Більшість автобусів вироблено в Україні або на пострадянському просторі. Найбільші постачальники компанії “Еталон”, “Богдан”, Львівський автобусний завод, а також Павлівський автобусний завод (Росія). Серед великих міжнародних компаній присутні  MERCEDES-BENZ та VOLKSWAGEN. На перелічені компанії припадає близько половини усіх автобусів в Україні. Більшість з них, вироблені з 2003 по 2006 роки.</p>
-
-        <p>Більшість моделей MERCEDES-BENZ та VOLKSWAGEN, які працюють в Україні,  це вантажні мікроавтобуси, такі як Mercedes-Benz Sprinter. Вони не призначені для перевезення людей, особливо на великі відстані! Як правило їх  купують вживаними в ЄС, адже вони там не відповідають новим екологічним стандартам, тому продають дуже дешево і переобладнують під пасажирські вже в Україні.</p>
-
-        <p>Ще однією важливою рисою є місткість, лише у 12% автобусів мають більше 20 місць. Перевезення маленькими автобусами більш шкідливе для довкілля ніж великими. Адже з розрахунку на одного пасажира створюється більше шкідливих викидів.</p>
-
-        <p>Великі автобуси безпечніші для пасажирів і значно зручніші. В ідеалі такі автобуси мають бути низькопідлоговими, та пристосованими для маломобільних людей. Важливо, щоб люди з інвалідністю, малими дітьми, або просто ті, кому складно пересуватися пішки, мали рівний доступ до транспорту. Бо транспорт  дає їм доступ до кращої роботи, освіти і повноцінного соціального життя.</p>
-
-
-
+      </div>
     </section>
-</article> -->
+
+    <script src="libs/leaflet.js "></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.1/mapbox-gl.js"></script>
+    <script src="libs/leaflet-mapbox-gl.js"></script>
+    <script src="libs/pixi.js"></script>
+    <script src="libs/glify.js"></script>
+    <script src="libs/L.PixiOverlay.js"></script>
+    <script src="libs/rbush.js"></script>
+    <script src="libs/turf.min.js"></script>
+    <!-- <script src="libs/country.js"></script> -->
+    
+    
+    <script src="libs/d3.js"></script>
+    <script src="libs/vue.min.js"></script>
+    <script src="libs/vuex.min.js"></script>
+    <script src="libs/jquery-3.3.1.js"></script>
+    <script src="libs/typeahead.js"></script>
 
 
+    <script src="js/mapOverlay.js"></script>
+    <script src="js/map.js"></script>
+<!--     <script src="js/mapInt.js"></script>
+ -->  
 
-<!-- <section id="partners" class="reading">
-    <div></div>
-    <img style="width:100%" src="img/usaid.png">
-    <img class="smaller" style="width:100%" src="img/ukaid.jpeg">
-    <img  style="width:100%; margin-top:5px" src="img/eurasia.png">
-    <img style="width:100%; margin-top:5px" src="img/ega.jpeg">
-    <img class="smaller" style="width:80%; margin: auto" src="img/miu.jpeg">
-    <img style="width:90%; margin-top:10px" src="img/texty.png">
-</section> -->
+	<script type="text/javascript">
+	    var _gaq = _gaq || [];
+	    _gaq.push(['_setAccount', 'UA-18136548-1']);
+	    _gaq.push(['_trackPageview']);
+	    (function() {
+	        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	        ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+	        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	    })();
+	</script>
 
-
-
-<footer>
-    <!--<section id="donate">-->
-        <!--<h5>TEXTY.ORG.UA — незалежне видання без навʼязливої реклами й замовних матеріалів. Щоб працювати далі, нам потрібна ваша підтримка. </h5>-->
-        <!--<a id="support-us" class="button" target="_blank" href="https://www.liqpay.ua/api/3/checkout?data=eyJ2ZXJzaW9uIjozLCJhY3Rpb24iOiJwYXlkb25hdGUiLCJwdWJsaWNfa2V5IjoiaTc2NjUwNTYyODI3IiwiYW1vdW50IjoiNTAiLCJjdXJyZW5jeSI6IlVBSCIsImRlc2NyaXB0aW9uIjoi0J%2FQvtC20LXRgNGC0LLQsCIsInR5cGUiOiJkb25hdGUiLCJsYW5ndWFnZSI6InVrIn0%3D&amp;signature=YFkd4Z74QCJXRxMTPoWm0JVlkX4%3D">ПОЖЕРТВУВАТИ</a>-->
-
-    <!--</section>-->
-
-    <!-- <section id="read_more">
-        <h3>Читайте також:</h3>
-        <a target="_blank" href="http://texty.org.ua/d/urban-heat-web/">
-            <img src="img/suggest1.png" alt="Українська бетонна пустеля">
-        </a>
-        <a target="_blank" href="http://texty.org.ua/pg/article/newsmaker/read/35559">
-            <img src="img/suggest2.png" alt="Як збудувати місто, в якому варто жити. Лекція Енріке Пеньялоси">
-        </a>
-        <a target="_blank" href="http://texty.org.ua/d/longs/dnipro2/">
-            <img src="img/suggest3.png" alt="Вкрадений Дніпро">
-        </a>
-    </section> -->
-<!-- 
-    <section id="created_texty">
-        <div>
-            <h3>Створено Текстами</h3>
-        </div>
-        <div>
-            <a href="http://texty.org.ua/" target="_blank"><img src="img/logo1.png" alt="texty.org.ua"></a>
-        </div>
-    </section> -->
-<!-- </footer> -->
-
-<!--<script src="js/app.js"></script>-->
-<script src="js/main.js"></script>
-<script src="js/country.js"></script>
-<script src="js/regions_old.js"></script>
-
-</body>
+ </body>
 </html>
