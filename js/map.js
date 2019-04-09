@@ -401,7 +401,10 @@ var gl = L.mapboxGL({
           {{ item.stop_name }}
         </span>
         <span class="stop_name">
-          {{ direction ? item.arrival_direct : item.arrival_return }}
+        {{ direction 
+          ? item.arrival_direct != "" ? item.arrival_direct : item.departure_direct
+          : item.arrival_return != "" ? item.arrival_return : item.departure_return
+        }}
         </span>
       </p>
     </div>
